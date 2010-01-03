@@ -8,4 +8,4 @@ More information in:
 Improving Heuristics for the Next Release Problem through Landscape Visualization
 Search-Based Software Engineering, 222-227 (2014)</i>
 
-FIXED RANDOM SEED: 253958446296927
+FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
