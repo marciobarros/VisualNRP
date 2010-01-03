@@ -1,7 +1,7 @@
 package br.unirio.visualnrp.command;
 
 import br.unirio.visualnrp.calc.ReleaseLandscapeReport;
-import br.unirio.visualnrp.instance.Instance;
+import br.unirio.visualnrp.model.Instance;
 
 /**
  * Class that represents the command that generates the release-planning report

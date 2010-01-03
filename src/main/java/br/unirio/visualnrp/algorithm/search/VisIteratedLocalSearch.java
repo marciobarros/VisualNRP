@@ -6,8 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
-import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
-import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
 import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
@@ -75,10 +74,12 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	private int minCustomers;
 	private int maxCustomers;
 	private final int numberSamplingIter;
+	private int riskImportance;
 
-	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
+	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
 	{
 		this.project = project;
+		this.riskImportance = riskImportance;
 		this.availableBudget = budget;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
@@ -143,9 +144,9 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		this.minCustomers = executeRandomSampling(numberSamplingIter, project, calculator);
 		this.maxCustomers = customerCount;
 
-		//sthis.currentSolution = new boolean[customerCount];
-		//Solution.copySolution(bestSol, currentSolution);
-		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
+		this.currentSolution = new boolean[customerCount];
+		Solution.copySolution(bestSol, currentSolution);
+//		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
 		
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
@@ -180,7 +181,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 			detailsFile.println(evaluations + "; " + currentFitness);
 		}
 
-		return calculator.evaluate(solution, availableBudget, 0);
+		return calculator.evaluate(solution, availableBudget, riskImportance);
 	}
 
 	/**
@@ -265,7 +266,8 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	{
 		int numberOfCustomersBest = 0;
 		Solution hcrs = new Solution(project);
-		Constructor sampConstructor = new RandomConstructor(project);
+//		Constructor sampConstructor = new RandomConstructor(project);
+		Constructor sampConstructor = new GreedyConstructor(project);
 
 		for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++)
 		{
@@ -319,14 +321,14 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 
 				if (evaluations > maxEvaluations)
 				{
-					return new NeighborhoodVisitorResult(
-							NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
+					return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 				}
 
 				if (neighborFitness > startingFitness)
 				{
 					return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
 				}
+				
 				solution.flipCustomer(customerI);
 			}
 
