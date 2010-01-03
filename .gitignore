@@ -8,4 +8,5 @@ target/
 /bin/
 /saida.txt
 /saida details.txt
-/results
+/results/landscape/
+/results/analysis/*.zip
