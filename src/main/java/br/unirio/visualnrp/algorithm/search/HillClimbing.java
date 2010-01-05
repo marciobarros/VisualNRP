@@ -54,21 +54,33 @@ public class HillClimbing extends SearchAlgorithm
 	 */
 	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
-		this.currentSolution = constructor.generateSolution();
-		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs, calculator);
+		Solution bestSolution = new Solution(getProject(), getConstructor().generateSolution());
+		double bestFitness = evaluate(bestSolution, calculator, 0.0);
 
-		int customerCount = project.getCustomerCount();
-		boolean[] solution = new boolean[customerCount];
-		Solution.copySolution(hcrs.getSolution(), solution);
-
-		while (localSearch(solution, calculator))
+		Solution solution = localSearch(bestSolution, calculator, bestFitness);
+		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+		
+		if (fitness > bestFitness)
+		{
+			bestSolution = solution;
+			bestFitness = fitness;
+		}
+		
+		while (getEvaluationsConsumed() < getMaximumEvaluations())
 		{
 			this.randomRestartCount++;
-			solution = constructor.generateSolution();
+			
+			Solution startSolution = new Solution(getProject(), getConstructor().generateSolution());
+			solution = localSearch(startSolution, calculator, bestFitness);
+			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			
+			if (fitness > bestFitness)
+			{
+				bestSolution = solution;
+				bestFitness = fitness;
+			}
 		}
 
-		return currentSolution;
+		return bestSolution.getSolution();
 	}
 }

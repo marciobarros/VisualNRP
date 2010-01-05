@@ -1,7 +1,6 @@
 package br.unirio.visualnrp.algorithm.search;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.calc.IFitnessCalculator;
@@ -26,55 +25,49 @@ public class IteratedLocalSearch extends SearchAlgorithm
 	 */
 	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
-		int customerCount = project.getCustomerCount();
+		Solution bestSolution = new Solution(getProject(), getConstructor().generateSolution());
+		double bestFitness = evaluate(bestSolution, calculator, 0.0);
 
-		this.currentSolution = constructor.generateSolution();
-		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs, calculator);
-
-		boolean[] bestSol = new boolean[customerCount];
-		localSearch(currentSolution, calculator);
-		Solution.copySolution(currentSolution, bestSol);
-		double bestFitness = this.currentFitness;
-
-		while (getIterations() < getMaximumIterations())
+		Solution solution = localSearch(bestSolution, calculator, bestFitness);
+		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+		
+		if (fitness > bestFitness)
 		{
-			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
-			localSearch(perturbedSolution, calculator);
-
-			if (shouldAccept(currentFitness, bestFitness))
+			bestSolution = solution;
+			bestFitness = fitness;
+		}
+		
+		while (getEvaluationsConsumed() < getMaximumEvaluations())
+		{
+			Solution startSolution = applyPerturbation(bestSolution);
+			solution = localSearch(startSolution, calculator, bestFitness);
+			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			
+			if (fitness > bestFitness)
 			{
-				Solution.copySolution(currentSolution, bestSol);
-				bestFitness = this.currentFitness;
+				bestSolution = solution;
+				bestFitness = fitness;
 			}
 		}
 
-		return bestSol;
+		return bestSolution.getSolution();
 	}
 
 	/**
 	 * Applies the perturbation operator upon a solution
 	 */
-	private boolean[] perturbSolution(boolean[] solution, int customerCount)
+	private Solution applyPerturbation(Solution solution)
 	{
-		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
+		Solution perturbedSolution = solution.clone();
+		int customerCount = getProject().getCustomerCount();
 		int amount = 2;
 
 		for (int i = 0; i < amount; i++)
 		{
 			int customer = PseudoRandom.randInt(0, customerCount-1);
-			newSolution[customer] = !newSolution[customer];
+			perturbedSolution.flipCustomer(customer);
 		}
 
-		return newSolution;
-	}
-
-	/**
-	 * Determines whether should accept a given solution
-	 */
-	private boolean shouldAccept(double solutionFitness, double bestFitness)
-	{
-		return solutionFitness > bestFitness;
+		return perturbedSolution;
 	}
 }

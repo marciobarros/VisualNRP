@@ -1,5 +1,7 @@
 package br.unirio.visualnrp.algorithm.search;
 
+import java.util.Arrays;
+
 import br.unirio.visualnrp.model.Project;
 
 /**
@@ -40,6 +42,41 @@ public class Solution
 		this.profitRisk = 0.0;
 		this.costRisk = 0.0;
 		this.worstCost = 0.0;
+	}
+	
+	/**
+	 * Initializes the solution, given a project
+	 */
+	public Solution(Project project, boolean[] selectedCustomers)
+	{
+		this(project);
+		setAllCustomers(selectedCustomers);
+	}
+	
+	/**
+	 * Initializes the solution, given a solution
+	 */
+	public Solution(Solution source)
+	{
+		this.project = source.project;
+		
+		int customerCount = project.getCustomerCount();
+		this.currentCustomerSelection = Arrays.copyOf(source.currentCustomerSelection, customerCount);
+
+		int requirementCount = project.getRequirementCount();
+		this.currentRequirementSelection = Arrays.copyOf(source.currentRequirementSelection, requirementCount);
+		
+		this.customerRequirementsPrecedences = new int[customerCount][requirementCount+1];
+
+		for (int i = 0; i < customerCount; i++)
+			for (int j = 0; j < requirementCount+1; j++)
+				this.customerRequirementsPrecedences[i][j] = source.customerRequirementsPrecedences[i][j];
+		
+		this.cost = source.cost;
+		this.profit = source.profit;
+		this.profitRisk = source.profitRisk;
+		this.costRisk = source.costRisk;
+		this.worstCost = source.worstCost;
 	}
 	
 	/**
@@ -326,5 +363,40 @@ public class Solution
 
 		for (int i = 0; i < len; i++)
 			target[i] = source[i];
+	}
+
+	/**
+	 * Creates a copy of the current solution
+	 */
+	public Solution clone()
+	{
+		return new Solution(this);
+	}
+
+	/**
+	 * Returns the number of customers attended by a solution
+	 */
+	public int countAttendedCustomers()
+	{
+		int customerCount = currentCustomerSelection.length;
+		int count = 0;
+		
+		for (int i = 0; i < customerCount; i++)
+		{
+			if (currentCustomerSelection[i])
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	/**
+	 * Checks whether a customer is attended
+	 */
+	public boolean isCustomerAttended(int customerIndex)
+	{
+		return currentCustomerSelection[customerIndex];
 	}
 }
