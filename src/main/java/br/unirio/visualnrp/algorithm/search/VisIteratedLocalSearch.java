@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
-import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
+import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
 import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
@@ -116,8 +116,8 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		double bestFitness = Double.MIN_VALUE;
 		boolean[] bestSolution = new boolean[customerCount];
 		
-		Constructor sampConstructor = new RandomConstructor(project);
-//		Constructor sampConstructor = new GreedyConstructor(project);
+//		Constructor sampConstructor = new RandomConstructor(project);
+		Constructor sampConstructor = new GreedyConstructor(project);
 
 		for (int i = 1; i <= customerCount; i++)
 		{
