@@ -3,7 +3,7 @@ package br.unirio.visualnrp.algorithm.search;
 import java.io.PrintWriter;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
-import br.unirio.visualnrp.calc.IFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -15,9 +15,9 @@ public class IteratedLocalSearch extends SearchAlgorithm
 	/**
 	 * Initializes the ILS search process
 	 */
-	public IteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
+	public IteratedLocalSearch(PrintWriter detailsFile, Project project, int maxEvaluations, Constructor constructor) throws Exception
 	{
-		super(detailsFile, project, budget, riskImportance, maxEvaluations, constructor);
+		super(detailsFile, project, maxEvaluations, constructor);
 	}
 
 	/**
@@ -29,7 +29,7 @@ public class IteratedLocalSearch extends SearchAlgorithm
 		double bestFitness = evaluate(bestSolution, calculator, 0.0);
 
 		Solution solution = localSearch(bestSolution, calculator, bestFitness);
-		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+		double fitness = calculator.evaluate(solution);
 		
 		if (fitness > bestFitness)
 		{
@@ -41,7 +41,7 @@ public class IteratedLocalSearch extends SearchAlgorithm
 		{
 			Solution startSolution = applyPerturbation(bestSolution);
 			solution = localSearch(startSolution, calculator, bestFitness);
-			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			fitness = calculator.evaluate(solution);
 			
 			if (fitness > bestFitness)
 			{

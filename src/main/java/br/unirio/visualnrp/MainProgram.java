@@ -8,21 +8,12 @@ import br.unirio.visualnrp.command.CommandFactory;
  * 
  * @author Marcio
  */
-@SuppressWarnings("unused")
 public class MainProgram
 {
-	private void runOptimizer() throws Exception
-	{
-//		new Optimizer()
-//			.clean()
-//			.execute(classicInstanceFilenames, new double[] {0.3, 0.5, 0.7})
-//			.execute(realisticInstanceFilenames, new double[] {0.3, 0.5});
-	}
-
-	// LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt
-	// LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt
 	public static void main(String[] args) throws Exception
 	{
+//		System.in.read();
+
 		if (args.length == 0)
 		{
 			System.out.println("Command missing. " + CommandFactory.getInstance().generalHelp());

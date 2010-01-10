@@ -9,6 +9,7 @@ import br.unirio.visualnrp.model.Project;
  * 
  * @author Marcio
  */
+@SuppressWarnings("unused")
 public class Solution
 {
 	private Project project;
@@ -29,7 +30,7 @@ public class Solution
 		this.project = project;
 
 		prepareCustomersRequirementPrecedences();
-		checkConsistency(project);
+		//checkConsistency(project);
 		
 		int customerCount = project.getCustomerCount();
 		this.currentCustomerSelection = new boolean[customerCount];
@@ -66,11 +67,7 @@ public class Solution
 		int requirementCount = project.getRequirementCount();
 		this.currentRequirementSelection = Arrays.copyOf(source.currentRequirementSelection, requirementCount);
 		
-		this.customerRequirementsPrecedences = new int[customerCount][requirementCount+1];
-
-		for (int i = 0; i < customerCount; i++)
-			for (int j = 0; j < requirementCount+1; j++)
-				this.customerRequirementsPrecedences[i][j] = source.customerRequirementsPrecedences[i][j];
+		this.customerRequirementsPrecedences = source.customerRequirementsPrecedences;
 		
 		this.cost = source.cost;
 		this.profit = source.profit;
@@ -307,8 +304,9 @@ public class Solution
 	private void addCustomerRequirementsCostAndRisk(int customerIndex)
 	{
 		int requirementIndex;
+		int[] requirementsCustomer = customerRequirementsPrecedences[customerIndex];
 
-		for (int i = 0; (requirementIndex = customerRequirementsPrecedences[customerIndex][i]) >= 0; i++)
+		for (int i = 0; (requirementIndex = requirementsCustomer[i]) >= 0; i++)
 		{
 			if (currentRequirementSelection[requirementIndex] == 0)
 			{
@@ -327,8 +325,9 @@ public class Solution
 	private void removeCustomerRequirementsCostAndRisk(int customerIndex)
 	{
 		int requirementIndex;
+		int[] requirementsCustomer = customerRequirementsPrecedences[customerIndex];
 
-		for (int i = 0; (requirementIndex = customerRequirementsPrecedences[customerIndex][i]) >= 0; i++)
+		for (int i = 0; (requirementIndex = requirementsCustomer[i]) >= 0; i++)
 		{
 			currentRequirementSelection[requirementIndex]--;
 

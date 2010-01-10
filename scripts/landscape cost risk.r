@@ -7,13 +7,13 @@ plotInstance <- function(basedir, name) {
 
 	datafile <- paste(basedir, "results/landscape/cost-risk/", name, ".txt", sep="")
 	data <- read.table(datafile, sep=",", header=TRUE)
-	data <- subset(data, data$fit >= 0)
+	#data <- subset(data, data$fit >= 0)
 
 	data10 <- subset(data, data$budget == 30 & data$risk == 10)
 	boxplot(data10$fit~data10$cust, main=paste(name, "-30 / Risk 10%", sep=""))
 	
-	data25 <- subset(data, data$budget == 30 & data$risk == 25)
-	boxplot(data25$fit~data25$cust, main=paste(name, "-30 / Risk 25%", sep=""))
+	data25 <- subset(data, data$budget == 30 & data$risk == 20)
+	boxplot(data25$fit~data25$cust, main=paste(name, "-30 / Risk 20%", sep=""))
 	
 	data40 <- subset(data, data$budget == 30 & data$risk == 40)
 	boxplot(data40$fit~data40$cust, main=paste(name, "-30 / Risk 40%", sep=""))

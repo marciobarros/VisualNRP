@@ -3,6 +3,14 @@ package br.unirio.visualnrp.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.unirio.visualnrp.command.landscape.CommandCostCapLandscape;
+import br.unirio.visualnrp.command.landscape.CommandCostRiskLandscape;
+import br.unirio.visualnrp.command.landscape.CommandReleasePlanningLandscape;
+import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostCap;
+import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostRisk;
+import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfit;
+import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfitRisk;
+
 /**
  * Class that represents a command factory
  * 
@@ -26,10 +34,14 @@ public class CommandFactory
 	private CommandFactory()
 	{
 		this.commands = new ArrayList<Command>();
+
 		this.commands.add(new CommandReleasePlanningLandscape());
 		this.commands.add(new CommandCostRiskLandscape());
-		this.commands.add(new CommandProfitRiskLandscape());
+		this.commands.add(new CommandCostCapLandscape());
+		
+		this.commands.add(new CommandOptimizeCostRisk());
 		this.commands.add(new CommandOptimizeProfitRisk());
+		this.commands.add(new CommandOptimizeCostCap());
 		this.commands.add(new CommandOptimizeProfit());
 	}
 	
