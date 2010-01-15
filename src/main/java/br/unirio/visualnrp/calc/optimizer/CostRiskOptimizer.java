@@ -19,7 +19,7 @@ public class CostRiskOptimizer extends GenericOptimizer
 	/**
 	 * Creates the optimization report for a given instance
 	 */
-	private void createReportForInstance(PrintWriter out, Project project, int[] budgetFactors, int[] riskImportances, int[] maximumProfits, Algorithm[] algorithms) throws Exception
+	private void createReportForInstance(PrintWriter out, Project project, int[] budgetFactors, int[] riskImportances, int[] maximumProfits, double[] maximumRisks, Algorithm[] algorithms) throws Exception
 	{
 		for (int i = 0; i < budgetFactors.length; i++)
 		{
@@ -27,7 +27,7 @@ public class CostRiskOptimizer extends GenericOptimizer
 			{
 				int budgetFactor = budgetFactors[i];
 				int availableBudget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
-				CostRiskFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfits[i]);
+				CostRiskFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfits[i], maximumRisks[i]);
 				
 				for (Algorithm algorithm : algorithms)
 				{
@@ -40,7 +40,7 @@ public class CostRiskOptimizer extends GenericOptimizer
 	/**
 	 * Runs the optimization report for cost risk
 	 */
-	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, int[][] maximumProfits, String outputFilename) throws Exception
+	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, int[][] maximumProfits, double[][] maximumRisks, String outputFilename) throws Exception
 	{
 		PrintWriter out = createOutputFile(outputFilename);
 
@@ -50,7 +50,7 @@ public class CostRiskOptimizer extends GenericOptimizer
 			RequirementReader reader = new RequirementReader();
 			Project project = reader.execute(instance);
 			System.out.println("Processing " + project.getName() + " ...");
-			createReportForInstance(out, project, budgetFactors, riskImportances, maximumProfits[i], ALGORITHM_ILS_VISILS);
+			createReportForInstance(out, project, budgetFactors, riskImportances, maximumProfits[i], maximumRisks[i], ALGORITHM_ILS_VISILS);
 		}
 		
 		out.close();

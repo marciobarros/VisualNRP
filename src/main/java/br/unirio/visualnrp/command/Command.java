@@ -157,6 +157,19 @@ public abstract class Command
 
 		return result;
 	}
+	
+	/**
+	 * Converte um vetor de strings em um vetor de doubles
+	 */
+	protected double[] asDoubleArray(String[] values) throws Exception
+	{
+		double[] result = new double[values.length];
+		
+		for (int i = 0; i < values.length; i++)
+			result[i] = Double.parseDouble(values[i]);
+
+		return result;
+	}
 
 	/**
 	 * Adds help for a parameter

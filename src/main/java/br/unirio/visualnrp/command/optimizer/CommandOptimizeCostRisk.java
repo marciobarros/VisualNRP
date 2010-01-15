@@ -21,6 +21,7 @@ public class CommandOptimizeCostRisk extends Command
 	private int[] budgets;
 	private int[] riskLevels;
 	private int[][] maximumProfits;
+	private double[][] maximumRisks;
 	private String outputFilename;
 	private long seed;
 	
@@ -35,12 +36,14 @@ public class CommandOptimizeCostRisk extends Command
 		this.budgets = null;
 		this.riskLevels = null;
 		this.maximumProfits = null;
+		this.maximumRisks = null;
 		this.outputFilename = "";
 		this.seed = -1;
 		
 		addParameterHelp("-i", "List of instances, separated by whitespaces, or category");
 		addParameterHelp("-b", "Budget percentiles, separated by whitespaces (0 to 100)");
-		addParameterHelp("-m", "Maximum budget for the instances and budgets (instances first)");
+		addParameterHelp("-mb", "Maximum budget for the instances and budgets (instances first)");
+		addParameterHelp("-mr", "Maximum risks for the instances and budgets (instances first)");
 		addParameterHelp("-r", "Risk levels, separated by whitespaces (0 to 100)");
 		addParameterHelp("-o", "Output filename");
 		addParameterHelp("-s", "Fixed random number generator seed (optional)");
@@ -56,6 +59,7 @@ public class CommandOptimizeCostRisk extends Command
 		parseBudgetParameter(parameters);
 		parseRiskLevelParameter(parameters);
 		parseMaximumProfitParameter(parameters);
+		parseMaximumRiskParameter(parameters);
 
 		outputFilename = getParameterValue(parameters, "-o");
 		
@@ -119,7 +123,7 @@ public class CommandOptimizeCostRisk extends Command
 	 */
 	private void parseMaximumProfitParameter(String[] parameters) throws Exception
 	{
-		String[] sValues = getParameterValues(parameters, "-m");
+		String[] sValues = getParameterValues(parameters, "-mb");
 		int[] values = asIntegerArray(sValues);
 		
 		int instanceCount = instances.size();
@@ -143,13 +147,41 @@ public class CommandOptimizeCostRisk extends Command
 	}
 
 	/**
+	 * Parse the parameter related to maximum risk
+	 */
+	private void parseMaximumRiskParameter(String[] parameters) throws Exception
+	{
+		String[] sValues = getParameterValues(parameters, "-mr");
+		double[] values = asDoubleArray(sValues);
+		
+		int instanceCount = instances.size();
+		int budgetCount = budgets.length;
+		
+		int expectedMaximumRisks = instanceCount * budgetCount;
+		int receivedMaximumRisks= values.length;
+		
+		if (receivedMaximumRisks != expectedMaximumRisks)
+			throw new Exception("The number of maximum risk should be " + expectedMaximumRisks + ", but was " + receivedMaximumRisks + ".");
+		
+		this.maximumRisks = new double[instances.size()][];
+		
+		for (int i = 0; i < instanceCount; i++)
+		{
+			this.maximumRisks[i] = new double[budgetCount];
+			
+			for (int j = 0; j < budgetCount; j++)
+				this.maximumRisks[i][j] = values[i * budgetCount + j];
+		}
+	}
+
+	/**
 	 * Runs the command
 	 */
 	@Override
 	public boolean run() throws Exception
 	{
 		PseudoRandom.init(seed);
-		new CostRiskOptimizer().execute(instances, budgets, riskLevels, maximumProfits, outputFilename);
+		new CostRiskOptimizer().execute(instances, budgets, riskLevels, maximumProfits, maximumRisks, outputFilename);
 		return false;
 	}
 

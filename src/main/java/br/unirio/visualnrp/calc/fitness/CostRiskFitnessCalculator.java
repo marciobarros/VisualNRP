@@ -16,10 +16,11 @@ public class CostRiskFitnessCalculator implements IFitnessCalculator
 	private double riskImportance;
 	private double maximumProfit;
 	
-	public CostRiskFitnessCalculator(Project project, double availableBudget, int riskImportance, int maximumProfit)
+	public CostRiskFitnessCalculator(Project project, double availableBudget, int riskImportance, int maximumProfit, double maximumRisk)
 	{
 		this.totalCost = project.getTotalCost();
 		this.totalRisk = project.getTotalCostRisk();
+		this.totalRisk = maximumRisk;
 		this.availableBudget = availableBudget;
 		this.riskImportance = riskImportance / 100.0;
 		this.maximumProfit = maximumProfit;

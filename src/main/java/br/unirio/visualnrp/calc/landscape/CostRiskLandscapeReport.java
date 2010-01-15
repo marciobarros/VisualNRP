@@ -70,7 +70,7 @@ public class CostRiskLandscapeReport
 			for (int riskImportance : riskImportances)
 			{
 				System.out.println("Processing " + project.getName() + " ...");
-				IFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfit);
+				IFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfit, 1.0);
 				createLandscapeForBudget(out, project, constructor, budgetFactor, riskImportance, calculator);
 			}
 		}
