@@ -14,7 +14,7 @@ FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
 LANDSCAPES
 ==================================
 
-LCRR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o results/landscape/cost-risk/%s.txt -s 253958446296927
+LCRR -i classic -b 30 -r 10 50 80 -mb 1204 4970 7488 10690 18510 -mr 7.41 43.76 80.66 196.5 32.08 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 
 LCCR -i classic -b 30 -r 8 -o results/landscape/cost-cap/%s.txt -s 253958446296927
 
