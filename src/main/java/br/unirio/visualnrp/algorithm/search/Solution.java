@@ -275,6 +275,8 @@ public class Solution
 				this.profit += project.getCustomerProfit(i);
 				this.profitRisk += project.getCustomerProfitRisk(i);
 			}
+		
+		this.profitRisk = round(profitRisk);
 	}
 	
 	/**
@@ -296,6 +298,8 @@ public class Solution
 			this.profit += project.getCustomerProfit(customerIndex);
 			this.profitRisk += project.getCustomerProfitRisk(customerIndex);
 		}
+
+		this.profitRisk = round(profitRisk);
 	}
 
 	/**
@@ -317,6 +321,9 @@ public class Solution
 			
 			currentRequirementSelection[requirementIndex]++;
 		}
+
+		costRisk = round(costRisk);
+		worstCost = round(worstCost);
 	}
 
 	/**
@@ -338,6 +345,9 @@ public class Solution
 				worstCost -= project.getRequirementWorstCost(requirementIndex);
 			}
 		}
+		
+		costRisk = round(costRisk);
+		worstCost = round(worstCost);
 	}
 
 	/**
@@ -397,5 +407,22 @@ public class Solution
 	public boolean isCustomerAttended(int customerIndex)
 	{
 		return currentCustomerSelection[customerIndex];
+	}
+	
+	/**
+	 * Rounds a negative number due to a large amount of sums and substractions
+	 */
+	private double round(double value)
+	{
+		if (value < -1e-6)
+		{
+			System.out.println("Rounding ...... " + value);
+			return 0;
+		}
+		
+		if (value < 0)
+			return 0;
+		
+		return value;
 	}
 }

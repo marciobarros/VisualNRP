@@ -36,14 +36,7 @@ public class CostRiskFitnessCalculator implements IFitnessCalculator
 		double profitFactor = ((double)profit) / maximumProfit;
 		
 		double risk = solution.getCostRisk();
-		double riskFactor = (maximumRisk - risk) / maximumRisk;
-		
-		if (riskFactor < 0.0)
-			System.out.println("RiskFactor < 0.0 ...... " + risk);
-				
-		if (riskFactor > 1.0)
-			System.out.println("RiskFactor > 1.0 ...... " + risk);
-				
+		double riskFactor = Math.max(Math.min((maximumRisk - risk) / maximumRisk, 1.0), 0.0);
 		return (1 - riskImportance) * profitFactor + riskImportance * riskFactor;
 	}
 }

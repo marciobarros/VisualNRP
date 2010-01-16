@@ -14,7 +14,7 @@ FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
 LANDSCAPES
 ==================================
 
-LCRR -i classic -b 30 -r 10 50 80 -mb 1204 4970 7488 10690 18510 -mr 7.41 43.76 80.66 196.5 32.08 -o results/landscape/cost-risk/%s.txt -s 253958446296927
+LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 
 LCCR -i classic -b 30 -r 8 -o results/landscape/cost-cap/%s.txt -s 253958446296927
 
@@ -26,10 +26,12 @@ OPTIMIZERS
 
 OP -i classic -b 30 50 70 -o output_op_classic.txt -s 253958446296927
 
-OCO -i classic -b 30 -o saida_oco.txt -s 253958446296927
+OCO -i classic -b 30 50 70 -o output_oco_classic.txt -s 253958446296927
 
-OCC -i classic -b 30 50 70 -r 8 -o output_occ_classic.txt -s 253958446296927
+OPO -i classic -b 30 50 70 -o output_opo_classic.txt -s 253958446296927
 
-OCR -i classic -b 30 -r 10 20 40 -mb 1204 4970 7488 10690 18510 -mr 7.41 43.76 80.66 196.5 32.08 -o output_ocr_classic.txt -s 253958446296927
+OCR -i classic -b 30 -r 10 20 40 -o output_ocr_classic.txt -s 253958446296927
 
-OPR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o output_opr_classic.txt -s 253958446296927
+OCC -i classic -b 30 -r 8 -o output_occ_classic.txt -s 253958446296927
+
+OPR -i classic -b 30 -r 10 20 40 -o output_opr_classic.txt -s 253958446296927
