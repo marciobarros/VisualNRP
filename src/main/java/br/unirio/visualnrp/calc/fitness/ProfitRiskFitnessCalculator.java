@@ -11,18 +11,18 @@ import br.unirio.visualnrp.model.Project;
 public class ProfitRiskFitnessCalculator implements IFitnessCalculator
 {
 	private double totalCost;
-	private double totalRisk;
 	private double availableBudget;
 	private double riskImportance;
 	private double maximumProfit;
+	private double maximumRisk;
 	
-	public ProfitRiskFitnessCalculator(Project project, double availableBudget, int riskImportance, int maximumProfit)
+	public ProfitRiskFitnessCalculator(Project project, double availableBudget, int riskImportance, int maximumProfit, double maximumRisk)
 	{
 		this.totalCost = project.getTotalCost();
-		this.totalRisk = project.getTotalProfitRisk();
 		this.availableBudget = availableBudget;
 		this.riskImportance = riskImportance / 100.0;
 		this.maximumProfit = maximumProfit;
+		this.maximumRisk = maximumRisk;
 	}
 	
 	public double evaluate(Solution solution)
@@ -33,7 +33,10 @@ public class ProfitRiskFitnessCalculator implements IFitnessCalculator
 			return -cost / totalCost;
 
 		int profit = solution.getProfit();
+		double profitFactor = ((double)profit) / maximumProfit;
+		
 		double risk = solution.getProfitRisk();
-		return (1 - riskImportance) * profit / maximumProfit + riskImportance * (totalRisk - risk) / totalRisk;
+		double riskFactor = Math.max(Math.min((maximumRisk - risk) / maximumRisk, 1.0), 0.0);
+		return (1 - riskImportance) * profitFactor + riskImportance * riskFactor;
 	}
 }

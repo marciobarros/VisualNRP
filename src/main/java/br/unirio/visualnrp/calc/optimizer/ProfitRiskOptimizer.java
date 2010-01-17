@@ -33,7 +33,7 @@ public class ProfitRiskOptimizer extends GenericOptimizer
 			{
 				for (int riskImportance : riskImportances)
 				{
-					ProfitRiskFitnessCalculator calculator = new ProfitRiskFitnessCalculator(project, availableBudget, riskImportance, values.getMaximumProfit());
+					ProfitRiskFitnessCalculator calculator = new ProfitRiskFitnessCalculator(project, availableBudget, riskImportance, values.getMaximumProfit(), values.getMaximumProfitRisk());
 					
 					for (Algorithm algorithm : algorithms)
 					{
