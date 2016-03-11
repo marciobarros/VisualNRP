@@ -1,13 +1,22 @@
 package sobol.problems.requirements.hc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import java.util.HashMap;
 import java.util.Map;
+
+import jmetal.util.PseudoRandom;
+
 import org.junit.Test;
-import sobol.base.random.generic.AbstractRandomGenerator;
-import static org.mockito.Mockito.*;
-import static org.junit.Assert.*;
-import sobol.base.random.RandomGeneratorFactory;
-import sobol.base.random.pseudo.PseudoRandomGeneratorFactory;
+
+import sobol.problems.requirements.algorithm.constructor.Constructor;
+import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
 import sobol.problems.requirements.model.Project;
 
 public class GreedyConstructorTest {
@@ -22,15 +31,13 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionWith2CustomersShouldReturnSolutionWithBiggerRatio() {
-        AbstractRandomGenerator random = mock(AbstractRandomGenerator.class);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(2);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10);
-        when(random.singleInt(anyInt(), anyInt())).thenReturn(1, 0);
+        when(PseudoRandom.randInt(anyInt(), anyInt())).thenReturn(1, 0);
 
         Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);  
         
         boolean[] sol = constr.generateSolution();
         assertEquals(2, sol.length);
@@ -40,16 +47,13 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionWith2CustomersShouldReturnSolutionWithLowestRatioWithSmallProbability() {
-        AbstractRandomGenerator random = mock(AbstractRandomGenerator.class);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(2);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10);
-        when(random.singleInt(anyInt(), anyInt())).thenReturn(1, 100010);
+        when(PseudoRandom.randInt(anyInt(), anyInt())).thenReturn(1, 100010);
 
-        Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);  
-        
+        Constructor constr = new GreedyConstructor(project);        
         boolean[] sol = constr.generateSolution();
         assertEquals(2, sol.length);
         assertFalse(sol[0]);
@@ -58,16 +62,13 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionShouldRespectProfitLossRatio() {
-        RandomGeneratorFactory.setRandomFactoryForPopulation(new PseudoRandomGeneratorFactory());
-        AbstractRandomGenerator random = RandomGeneratorFactory.createForPopulation(4);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(4);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1, 10, 10);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10, 10, 1);
 
         Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);
-
+ 
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
         for(int i = 0; i < 4; i++) {
             map.put(i, 0);
@@ -88,15 +89,12 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionWith1ShouldReturnSolutionWith1Customer() {
-        RandomGeneratorFactory.setRandomFactoryForPopulation(new PseudoRandomGeneratorFactory());
-        AbstractRandomGenerator random = RandomGeneratorFactory.createForPopulation(4);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(4);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1, 10, 10);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10, 10, 1);
 
         Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);
         
         boolean[] sol = constr.generateSolutionWith(1);
         int count = 0;
@@ -111,15 +109,12 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionWith3ShouldReturnSolutionWith3Customers() {
-        RandomGeneratorFactory.setRandomFactoryForPopulation(new PseudoRandomGeneratorFactory());
-        AbstractRandomGenerator random = RandomGeneratorFactory.createForPopulation(4);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(4);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1, 10, 10);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10, 10, 1);
 
         Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);
         
         boolean[] sol = constr.generateSolutionWith(3);
         int count = 0;
@@ -134,16 +129,13 @@ public class GreedyConstructorTest {
     
     @Test
     public void generateSolutionInInterval2_3ShouldReturnSolutionWith2or3Customers() {
-        RandomGeneratorFactory.setRandomFactoryForPopulation(new PseudoRandomGeneratorFactory());
-        AbstractRandomGenerator random = RandomGeneratorFactory.createForPopulation(4);
         Project project = mock(Project.class);
         when(project.getCustomerCount()).thenReturn(4);
         when(project.getCustomerProfit(anyInt())).thenReturn(100, 1, 10, 10);
         when(project.calculateCost(any(boolean[].class))).thenReturn(1, 10, 10, 1);
 
         Constructor constr = new GreedyConstructor(project);
-        constr.setRandomGenerator(random);
-        
+       
         boolean[] sol = constr.generateSolutionInInterval(2, 3);
         int count = 0;
         for (int j = 0; j < sol.length; j++) {
