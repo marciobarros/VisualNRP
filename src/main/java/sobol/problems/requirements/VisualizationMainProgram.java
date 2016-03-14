@@ -15,15 +15,6 @@ public class VisualizationMainProgram
 	
 	private static String[] instanceFilenamesClassic =
 	{
-//                "data/requirements/padilha_1req_30cust.txt",
-//                "data/requirements/padilha_3req_30cust.txt",
-//                "data/requirements/padilha_5req_30cust.txt",
-//                "data/requirements/padilha_1req_50cust.txt",
-//                "data/requirements/padilha_3req_50cust.txt",
-//                "data/requirements/padilha_5req_50cust.txt",
-//                "data/requirements/padilha_1req_100cust.txt",
-//                "data/requirements/padilha_3req_100cust.txt",
-//                "data/requirements/padilha_5req_100cust.txt",
 		"data/requirements/classic/nrp1.txt",
 		"data/requirements/classic/nrp2.txt",
 		"data/requirements/classic/nrp3.txt",

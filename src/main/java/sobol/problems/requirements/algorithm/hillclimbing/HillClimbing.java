@@ -79,8 +79,7 @@ public class HillClimbing
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	public HillClimbing(PrintWriter detailsFile, Project project, int budget,
-			int maxEvaluations, Constructor constructor) throws Exception
+	public HillClimbing(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, Constructor constructor) throws Exception
 	{
 		this.project = project;
 		this.availableBudget = budget;
@@ -91,12 +90,11 @@ public class HillClimbing
 		this.restartBestFound = 0;
 		this.tmpSolution = new Solution(project);
 		this.constructor = constructor;
-		// createDefaultSelectionOrder(project);
 		createRandomSelectionOrder(project);
 	}
 
 	/**
-	 * Gera a ordem default de sele��o dos requisitos
+	 * Gera a ordem default de selecao dos requisitos
 	 */
 	protected void createDefaultSelectionOrder(Project project)
 	{
@@ -108,7 +106,7 @@ public class HillClimbing
 	}
 
 	/**
-	 * Gera uma ordem aleat�ria de sele��o dos requisitos
+	 * Gera uma ordem aleatoria de selecao dos requisitos
 	 */
 	protected void createRandomSelectionOrder(Project project)
 	{
@@ -219,13 +217,10 @@ public class HillClimbing
 		double startingFitness = evaluate(solution);
 
 		if (evaluations > maxEvaluations)
-			return new NeighborhoodVisitorResult(
-					NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
+			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 
 		if (startingFitness > fitness)
-			return new NeighborhoodVisitorResult(
-					NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR,
-					startingFitness);
+			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
 
 		int len = project.getCustomerCount();
 
@@ -237,19 +232,15 @@ public class HillClimbing
 			double neighborFitness = evaluate(solution);
 
 			if (evaluations > maxEvaluations)
-				return new NeighborhoodVisitorResult(
-						NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
+				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 
 			if (neighborFitness > startingFitness)
-				return new NeighborhoodVisitorResult(
-						NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR,
-						neighborFitness);
+				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
 
 			solution.flipCustomer(customerI);
 		}
 
-		return new NeighborhoodVisitorResult(
-				NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
+		return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
 	}
 
 	/**
@@ -264,8 +255,7 @@ public class HillClimbing
 		{
 			result = visitNeighbors(tmpSolution);
 
-			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR
-					&& result.getNeighborFitness() > fitness)
+			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > fitness)
 			{
 				copySolution(tmpSolution.getSolution(), bestSolution);
 				this.fitness = result.getNeighborFitness();

@@ -14,8 +14,8 @@ import sobol.problems.requirements.model.Project;
  * Hill Climbing searcher with random sampling phase for the next release problem
  *
  */
-public class VisHillClimbing extends HillClimbing {
-
+public class VisHillClimbing extends HillClimbing 
+{
     private int numberSamplingIter;
     private float intervalSize;
     private int minCustomers;
@@ -24,8 +24,8 @@ public class VisHillClimbing extends HillClimbing {
     /**
      * Initializes the Hill Climbing search process
      */
-    public VisHillClimbing(PrintWriter detailsFile, Project project, int budget, 
-            int maxEvaluations, int numberSamplingIter, float intervalSize, Constructor constructor) throws Exception {
+    public VisHillClimbing(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, int numberSamplingIter, float intervalSize, Constructor constructor) throws Exception 
+    {
         super(detailsFile, project, budget, maxEvaluations, constructor);
         this.numberSamplingIter = numberSamplingIter;
         this.intervalSize = intervalSize;
@@ -35,14 +35,17 @@ public class VisHillClimbing extends HillClimbing {
      * Runs a neighborhood visit starting from a given solution
      */
     @Override
-    protected NeighborhoodVisitorResult visitNeighbors(Solution solution) {
+    protected NeighborhoodVisitorResult visitNeighbors(Solution solution) 
+    {
         double startingFitness = evaluate(solution);
 
-        if (evaluations > maxEvaluations) {
+        if (evaluations > maxEvaluations) 
+        {
             return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
         }
 
-        if (startingFitness > fitness) {
+        if (startingFitness > fitness) 
+        {
             return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
         }
 
@@ -50,24 +53,28 @@ public class VisHillClimbing extends HillClimbing {
         boolean[] solutionAsArray = new boolean[len];
         copySolution(solution.getSolution(), solutionAsArray);
         
-        for (int i = 0; i < len; i++) {
+        for (int i = 0; i < len; i++) 
+        {
             int customerI = selectionOrder[i];
 
             solutionAsArray[customerI] = (solutionAsArray[customerI] == true) ? false : true;
             int numberOfCustomers = VisualHeuristics.numberOfCustomersServedBySolution(solutionAsArray);
 
-            if(numberOfCustomers >= minCustomers && numberOfCustomers <= maxCustomers) {
-
+            if(numberOfCustomers >= minCustomers && numberOfCustomers <= maxCustomers) 
+            {
                 solution.flipCustomer(customerI);
                 double neighborFitness = evaluate(solution);
 
-                if (evaluations > maxEvaluations) {
+                if (evaluations > maxEvaluations) 
+                {
                     return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
                 }
 
-                if (neighborFitness > startingFitness) {
+                if (neighborFitness > startingFitness) 
+                {
                     return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
                 }
+                
                 solution.flipCustomer(customerI);
             }
 
@@ -81,7 +88,8 @@ public class VisHillClimbing extends HillClimbing {
      * Executes the Hill Climbing search with random restarts
      */
     @Override
-    public boolean[] execute() throws Exception {
+    public boolean[] execute() throws Exception 
+    {
         int customerCount = project.getCustomerCount();
         this.bestSolution = new boolean[customerCount];
         
@@ -93,12 +101,14 @@ public class VisHillClimbing extends HillClimbing {
         hcrs.setAllCustomers(bestSolution);
         double currFitness = evaluate(hcrs);
         
-        if(currFitness > this.fitness) {
+        if(currFitness > this.fitness) 
+        {
             copySolution(solution, this.bestSolution);
             this.fitness = currFitness;
         }
 
-        while (localSearch(solution)) {
+        while (localSearch(solution)) 
+        {
             this.randomRestartCount++;
             solution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
         }
@@ -106,20 +116,22 @@ public class VisHillClimbing extends HillClimbing {
         return bestSolution;
     }
 
-    private int executeRandomSampling(int numberSamplingIter, Project project) {
+    private int executeRandomSampling(int numberSamplingIter, Project project) 
+    {
         int numberOfCustomersBest = 0;
         Solution hcrs = new Solution(project);
         Constructor sampConstructor = new RandomConstructor(project);
          
-        for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++) {
-
-            for (int deriv = 0; deriv < numberSamplingIter; deriv++) {
-                
+        for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++) 
+        {
+            for (int deriv = 0; deriv < numberSamplingIter; deriv++) 
+            {    
                 boolean[] solution = sampConstructor.generateSolutionWith(numElemens);
                 hcrs.setAllCustomers(solution);
                 double solFitness = evaluate(hcrs);
                 
-                if(solFitness > this.fitness) {
+                if(solFitness > this.fitness) 
+                {
                     copySolution(solution, this.bestSolution);
                     this.fitness = solFitness;
                     numberOfCustomersBest = numElemens;

@@ -60,15 +60,13 @@ public class Visualization
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	public Visualization(PrintWriter detailsFile, Project project, int budget,
-			int numberOfDerivedSolutions) throws Exception
+	public Visualization(PrintWriter detailsFile, Project project, int budget, int numberOfDerivedSolutions) throws Exception
 	{
 		this.project = project;
 		this.availableBudget = budget;
 		this.randomRestartCount = 0;
 		this.restartBestFound = 0;
 		this.numberOfDerivedSolutions = numberOfDerivedSolutions;
-
 		createRandomSelectionOrder(project);
 	}
 
