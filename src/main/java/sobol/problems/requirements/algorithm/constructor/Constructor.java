@@ -7,9 +7,18 @@ package sobol.problems.requirements.algorithm.constructor;
  */
 public interface Constructor
 {
+	/**
+	 * Generates a unbounded solution
+	 */
 	boolean[] generateSolution();
 
+	/**
+	 * Generates a solution with a given number of customers
+	 */
 	boolean[] generateSolutionWith(int numberOfCustomers);
 
+	/**
+	 * Generates a solution within a given interval of customers
+	 */
 	boolean[] generateSolutionInInterval(int minCustomers, int maxCustomers);
 }

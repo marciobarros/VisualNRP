@@ -18,21 +18,27 @@ import sobol.problems.requirements.model.Project;
 public class GreedyConstructor implements Constructor
 {
 	private final Project project;
-	private final Map<Integer, Integer> profitLossRatios;
+	private final Map<Integer, Integer> profitLossRatios;		// TODO: might be an array ...
 
+	/**
+	 * Initializes the constructor
+	 */
 	public GreedyConstructor(Project project)
 	{
 		this.project = project;
 		this.profitLossRatios = calculateProfitLossRatios();
 	}
 
+	/**
+	 * Calculates the profit/loss ratio for each customer
+	 */
 	private Map<Integer, Integer> calculateProfitLossRatios()
 	{
 		int numberOfCustomers = project.getCustomerCount();
 		boolean[] sol = new boolean[numberOfCustomers];
-		Map<Integer, Integer> profitLoss = new HashMap<Integer, Integer>(
-				project.getCustomerCount());
 		Arrays.fill(sol, false);
+
+		Map<Integer, Integer> profitLoss = new HashMap<Integer, Integer>(numberOfCustomers);
 
 		for (int customer = 0; customer < numberOfCustomers; customer++)
 		{
@@ -46,6 +52,9 @@ public class GreedyConstructor implements Constructor
 		return profitLoss;
 	}
 
+	/**
+	 * Generates a unbounded solution
+	 */
 	public boolean[] generateSolution()
 	{
 		int customerCount = project.getCustomerCount();
@@ -53,81 +62,86 @@ public class GreedyConstructor implements Constructor
 		return generateSolutionWith(numberOfCustomers);
 	}
 
+	/**
+	 * Generates a solution with a given number of customers
+	 */
 	public boolean[] generateSolutionWith(int numberOfCustomers)
 	{
 		int customerCount = project.getCustomerCount();
 		boolean[] solution = new boolean[customerCount];
 		Arrays.fill(solution, false);
-		List<Integer> customers = new ArrayList<Integer>(
-				profitLossRatios.keySet());
+		
+		List<Integer> customers = new ArrayList<Integer>(profitLossRatios.keySet());
 
 		for (int i = 0; i < numberOfCustomers; i++)
 		{
-
-			int[] weights = getWeightsFor(customers);
-			WeightedSelector ws = new WeightedSelector(weights);
-			int selected = ws.getWeightedRandom();
+			int selected = getWeightedRandom(customers);
 			selected = customers.remove(selected);
-
 			solution[selected] = true;
 		}
 
 		return solution;
 	}
 
+	/**
+	 * Generates a solution within a given interval of customers
+	 */
 	public boolean[] generateSolutionInInterval(int minCustomers, int maxCustomers)
 	{
 		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers + 1);
 		return generateSolutionWith(numberOfCustomers);
 	}
 
+	/**
+	 * Randomly selects a customer, weighting the chances for their weights
+	 */
+	private int getWeightedRandom(List<Integer> customers)
+	{
+		int[] weights = getWeightsFor(customers);
+		int[] cumulative = computeCumulativeWeights(weights);
+		int totalWeight = cumulative[cumulative.length-1]; 
+				
+		int rand = PseudoRandom.randInt(0, totalWeight);
+		int pos = Arrays.binarySearch(cumulative, rand);
+		
+		if (pos < 0)
+			pos = Math.abs(pos) - 1;
+
+		return pos;
+	}
+
+	/**
+	 * Returns the weights for a list of customers
+	 */
 	private int[] getWeightsFor(List<Integer> customers)
 	{
+		// TODO: might already accumulate the weights
 		int[] weights = new int[customers.size()];
-		int idx = 0;
+		int index = 0;
 
-		for (Integer cust : customers)
+		for (Integer customer : customers)
 		{
-			weights[idx] = profitLossRatios.get(cust);
-			idx++;
+			weights[index] = profitLossRatios.get(customer);
+			index++;
 		}
+		
 		return weights;
 	}
-}
 
-class WeightedSelector
-{
-	private int[] lookup;
-	private int totalWeight;
-
-	public WeightedSelector(int[] weights)
-	{
-		this.lookup = computeLookup(weights);
-	}
-
-	private int[] computeLookup(int[] weights)
+	/**
+	 * Computes a list of cumulative weights for the customers
+	 */
+	private int[] computeCumulativeWeights(int[] weights)
 	{
 		int[] lookup = new int[weights.length];
-		totalWeight = 0;
+		int total = 0;
 
 		for (int i = 0; i < weights.length; i++)
 		{
-			totalWeight += weights[i];
-			lookup[i] = totalWeight;
+			total += weights[i];
+			lookup[i] = total;
 		}
 
 		return lookup;
-	}
-
-	public int getWeightedRandom()
-	{
-		int rand = PseudoRandom.randInt(0, totalWeight);
-		int pos = Arrays.binarySearch(lookup, rand);
-		if (pos < 0)
-		{
-			pos = Math.abs(pos) - 1;
-		}
-
-		return pos;
 	}
 }

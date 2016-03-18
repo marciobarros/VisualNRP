@@ -14,13 +14,22 @@ import sobol.problems.requirements.model.Project;
  */
 public class RandomConstructor implements Constructor
 {
+	/**
+	 * Set of requirements to be analyzed
+	 */
 	private Project project;
 
+	/**
+	 * Initializes the random constructor
+	 */
 	public RandomConstructor(Project project)
 	{
 		this.project = project;
 	}
 
+	/**
+	 * Generates a random solution
+	 */
 	public boolean[] generateSolution()
 	{
 		int customerCount = project.getCustomerCount();
@@ -34,6 +43,9 @@ public class RandomConstructor implements Constructor
 		return solution;
 	}
 
+	/**
+	 * Generates a random solution, given a number of customers
+	 */
 	public boolean[] generateSolutionWith(int numberOfCustomers)
 	{
 		int customerCount = project.getCustomerCount();
@@ -43,28 +55,32 @@ public class RandomConstructor implements Constructor
 
 		for (int i = 1; i <= numberOfCustomers; i++)
 		{
-			int rand = PseudoRandom.randInt(0, listOfPossibilities.size());
-			int position = listOfPossibilities.remove(rand);
-			solution[position] = true;
+			int position = PseudoRandom.randInt(0, listOfPossibilities.size());
+			int value = listOfPossibilities.remove(position);
+			solution[value] = true;
 		}
 
 		return solution;
 	}
 
+	/**
+	 * Generates a random solution, given an interval for the number of customers
+	 */
 	public boolean[] generateSolutionInInterval(int minCustomers, int maxCustomers)
 	{
 		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers + 1);
 		return generateSolutionWith(numberOfCustomers);
 	}
 
+	/**
+	 * Creates a list of sequential values
+	 */
 	private List<Integer> generateListOfSize(int size)
 	{
 		List<Integer> list = new ArrayList<Integer>(size);
 
 		for (int i = 0; i < size; i++)
-		{
 			list.add(i);
-		}
 
 		return list;
 	}

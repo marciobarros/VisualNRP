@@ -42,25 +42,25 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		this.maxCustomers = VisualHeuristics.calculateIntervalMax(minCustomers,
 				intervalSize, customerCount);
 
-		this.currSolution = constructor.generateSolutionInInterval(
+		this.currentSolution = constructor.generateSolutionInInterval(
 				minCustomers, maxCustomers);
 		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currSolution);
-		this.currFitness = evaluate(hcrs);
+		hcrs.setAllCustomers(currentSolution);
+		this.currentFitness = evaluate(hcrs);
 
-		localSearch(currSolution);
-		copySolution(currSolution, bestSol);
-		bestFitness = this.currFitness;
+		localSearch(currentSolution);
+		copySolution(currentSolution, bestSol);
+		bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
 		{
 			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
 			localSearch(perturbedSolution);
 
-			if (shouldAccept(currFitness, bestFitness))
+			if (shouldAccept(currentFitness, bestFitness))
 			{
-				copySolution(currSolution, bestSol);
-				bestFitness = this.currFitness;
+				copySolution(currentSolution, bestSol);
+				bestFitness = this.currentFitness;
 			}
 		}
 
@@ -158,7 +158,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 					NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 		}
 
-		if (startingFitness > currFitness)
+		if (startingFitness > currentFitness)
 		{
 			return new NeighborhoodVisitorResult(
 					NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR,

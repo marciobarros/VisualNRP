@@ -23,12 +23,12 @@ public class IteratedLocalSearch
 	/**
 	 * Solution being visited
 	 */
-	protected boolean[] currSolution;
+	protected boolean[] currentSolution;
 	
 	/**
 	 * Fitness of the solution being visited
 	 */
-	protected double currFitness;
+	protected double currentFitness;
 	
 	/**
 	 * Number of the random restart where the best solution was found
@@ -152,7 +152,7 @@ public class IteratedLocalSearch
 	 */
 	public boolean[] getBestSolution()
 	{
-		return currSolution;
+		return currentSolution;
 	}
 
 	/**
@@ -160,7 +160,7 @@ public class IteratedLocalSearch
 	 */
 	public double getFitness()
 	{
-		return currFitness;
+		return currentFitness;
 	}
 
 	/**
@@ -198,7 +198,7 @@ public class IteratedLocalSearch
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
 		{
-			detailsFile.println(evaluations + "; " + currFitness);
+			detailsFile.println(evaluations + "; " + currentFitness);
 		}
 
 		int cost = solution.getCost();
@@ -217,7 +217,7 @@ public class IteratedLocalSearch
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 		}
 
-		if (startingFitness > currFitness)
+		if (startingFitness > currentFitness)
 		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
 		}
@@ -259,10 +259,10 @@ public class IteratedLocalSearch
 		{
 			result = visitNeighbors(tmpSolution);
 
-			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currFitness)
+			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
 			{
-				copySolution(tmpSolution.getSolution(), currSolution);
-				this.currFitness = result.getNeighborFitness();
+				copySolution(tmpSolution.getSolution(), currentSolution);
+				this.currentFitness = result.getNeighborFitness();
 				this.iterationBestFound = evaluations;
 			}
 
@@ -271,35 +271,41 @@ public class IteratedLocalSearch
 		return (result.getStatus() == NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
 	}
 
+	/**
+	 * Main loop of the algorithm
+	 */
 	public boolean[] execute() throws Exception
 	{
 		int customerCount = project.getCustomerCount();
 
-		this.currSolution = constructor.generateSolution();
+		this.currentSolution = constructor.generateSolution();
 		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currSolution);
-		this.currFitness = evaluate(hcrs);
+		hcrs.setAllCustomers(currentSolution);
+		this.currentFitness = evaluate(hcrs);
 
 		boolean[] bestSol = new boolean[customerCount];
-		localSearch(currSolution);
-		copySolution(currSolution, bestSol);
-		double bestFitness = this.currFitness;
+		localSearch(currentSolution);
+		copySolution(currentSolution, bestSol);
+		double bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
 		{
 			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
 			localSearch(perturbedSolution);
 
-			if (shouldAccept(currFitness, bestFitness))
+			if (shouldAccept(currentFitness, bestFitness))
 			{
-				copySolution(currSolution, bestSol);
-				bestFitness = this.currFitness;
+				copySolution(currentSolution, bestSol);
+				bestFitness = this.currentFitness;
 			}
 		}
 
 		return bestSol;
 	}
 
+	/**
+	 * Applies the perturbation operator upon a solution
+	 */
 	protected boolean[] perturbSolution(boolean[] solution, int customerCount)
 	{
 		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
@@ -314,8 +320,11 @@ public class IteratedLocalSearch
 		return newSolution;
 	}
 
-	protected boolean shouldAccept(double currFitness, double bestFitness)
+	/**
+	 * Determines whether should accept a given solution
+	 */
+	protected boolean shouldAccept(double solutionFitness, double bestFitness)
 	{
-		return currFitness > bestFitness;
+		return solutionFitness > bestFitness;
 	}
 }

@@ -11,6 +11,7 @@ public class VisualHeuristics
 		{
 			maxNCustomers = customerCount;
 		}
+		
 		return maxNCustomers;
 	}
 
