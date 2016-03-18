@@ -1,70 +1,74 @@
-package sobol.problems.requirements.algorithm.ils;
+package sobol.problems.requirements.algorithm.search;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.localsearch.NeighborhoodVisitorResult;
-import sobol.problems.requirements.algorithm.localsearch.NeighborhoodVisitorStatus;
 import sobol.problems.requirements.algorithm.solution.Solution;
 import sobol.problems.requirements.model.Project;
 
 /**
- * Iterated Local Search for the next release problem
+ * Hill Climbing searcher for the next release problem
+ * 
+ * @author Marcio Barros
  */
-public class IteratedLocalSearch
+public class HillClimbing
 {
 	/**
 	 * Order under which requirements will be accessed
 	 */
 	protected int[] selectionOrder;
-	
+
 	/**
-	 * Solution being visited
+	 * Best solution found by the Hill Climbing search
 	 */
-	protected boolean[] currentSolution;
-	
+	protected boolean[] bestSolution;
+
 	/**
-	 * Fitness of the solution being visited
+	 * Fitness of the best solution found
 	 */
-	protected double currentFitness;
-	
+	protected double fitness;
+
+	/**
+	 * Number of random restart executed
+	 */
+	protected int randomRestartCount;
+
 	/**
 	 * Number of the random restart where the best solution was found
 	 */
-	protected int iterationBestFound;
-	
+	protected int restartBestFound;
+
 	/**
 	 * File where details of the search process will be printed
 	 */
 	protected PrintWriter detailsFile;
-	
+
 	/**
 	 * Set of requirements to be optimized
 	 */
 	protected Project project;
-	
+
 	/**
 	 * Available budget to select requirements
 	 */
 	protected int availableBudget;
-	
+
 	/**
 	 * Number of fitness evaluations available in the budget
 	 */
 	protected int maxEvaluations;
-	
+
 	/**
 	 * Number of fitness evaluations executed
 	 */
 	protected int evaluations;
-	
+
 	/**
 	 * Represents a solution of the problem. Utilized during the local search
 	 */
 	protected Solution tmpSolution;
-	
+
 	/**
 	 * A constructor algorithm for initial solutions generation.
 	 */
@@ -73,17 +77,30 @@ public class IteratedLocalSearch
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	public IteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, Constructor constructor) throws Exception
+	public HillClimbing(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, Constructor constructor) throws Exception
 	{
 		this.project = project;
 		this.availableBudget = budget;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
 		this.evaluations = 0;
-		this.iterationBestFound = 0;
+		this.randomRestartCount = 0;
+		this.restartBestFound = 0;
 		this.tmpSolution = new Solution(project);
 		this.constructor = constructor;
 		createRandomSelectionOrder(project);
+	}
+
+	/**
+	 * Gera a ordem default de selecao dos requisitos
+	 */
+	protected void createDefaultSelectionOrder(Project project)
+	{
+		int customerCount = project.getCustomerCount();
+		this.selectionOrder = new int[customerCount];
+
+		for (int i = 0; i < customerCount; i++)
+			this.selectionOrder[i] = i;
 	}
 
 	/**
@@ -95,21 +112,18 @@ public class IteratedLocalSearch
 		int[] temporaryOrder = new int[customerCount];
 
 		for (int i = 0; i < customerCount; i++)
-		{
 			temporaryOrder[i] = i;
-		}
 
 		this.selectionOrder = new int[customerCount];
 
 		for (int i = 0; i < customerCount; i++)
 		{
-			int index = (int) (PseudoRandom.randDouble() * (customerCount - i));
+			double random = PseudoRandom.randDouble();
+			int index = (int) (random * (customerCount - i));
 			this.selectionOrder[i] = temporaryOrder[index];
 
 			for (int j = index; j < customerCount - 1; j++)
-			{
 				temporaryOrder[j] = temporaryOrder[j + 1];
-			}
 		}
 
 		for (int i = 0; i < customerCount; i++)
@@ -117,34 +131,28 @@ public class IteratedLocalSearch
 			boolean achou = false;
 
 			for (int j = 0; j < customerCount && !achou; j++)
-			{
 				if (this.selectionOrder[j] == i)
-				{
 					achou = true;
-				}
-			}
 
 			if (!achou)
-			{
 				System.out.println("ERRO DE GERACAO DE INICIO ALEATORIO");
-			}
 		}
 	}
 
 	/**
 	 * Returns the number of random restarts executed during the search process
 	 */
-	public int getIterations()
+	public int getRandomRestarts()
 	{
-		return evaluations;
+		return randomRestartCount;
 	}
 
 	/**
 	 * Returns the number of the restart in which the best solution was found
 	 */
-	public int getIterationBestFound()
+	public int getRandomRestartBestFound()
 	{
-		return iterationBestFound;
+		return restartBestFound;
 	}
 
 	/**
@@ -152,7 +160,7 @@ public class IteratedLocalSearch
 	 */
 	public boolean[] getBestSolution()
 	{
-		return currentSolution;
+		return bestSolution;
 	}
 
 	/**
@@ -160,7 +168,7 @@ public class IteratedLocalSearch
 	 */
 	public double getFitness()
 	{
-		return currentFitness;
+		return fitness;
 	}
 
 	/**
@@ -171,9 +179,7 @@ public class IteratedLocalSearch
 		String s = "[" + (solution[0] ? "S" : "-");
 
 		for (int i = 1; i < solution.length; i++)
-		{
 			s += " " + (solution[i] ? "S" : "-");
-		}
 
 		return s + "]";
 	}
@@ -186,9 +192,7 @@ public class IteratedLocalSearch
 		int len = source.length;
 
 		for (int i = 0; i < len; i++)
-		{
 			target[i] = source[i];
-		}
 	}
 
 	/**
@@ -197,9 +201,7 @@ public class IteratedLocalSearch
 	protected double evaluate(Solution solution)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
-		{
-			detailsFile.println(evaluations + "; " + currentFitness);
-		}
+			detailsFile.println(evaluations + "; " + fitness);
 
 		int cost = solution.getCost();
 		return (cost <= availableBudget) ? solution.getProfit() : -cost;
@@ -213,14 +215,10 @@ public class IteratedLocalSearch
 		double startingFitness = evaluate(solution);
 
 		if (evaluations > maxEvaluations)
-		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
-		}
 
-		if (startingFitness > currentFitness)
-		{
+		if (startingFitness > fitness)
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
-		}
 
 		int len = project.getCustomerCount();
 
@@ -232,14 +230,10 @@ public class IteratedLocalSearch
 			double neighborFitness = evaluate(solution);
 
 			if (evaluations > maxEvaluations)
-			{
 				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
-			}
 
 			if (neighborFitness > startingFitness)
-			{
 				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
-			}
 
 			solution.flipCustomer(customerI);
 		}
@@ -259,11 +253,11 @@ public class IteratedLocalSearch
 		{
 			result = visitNeighbors(tmpSolution);
 
-			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
+			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > fitness)
 			{
-				copySolution(tmpSolution.getSolution(), currentSolution);
-				this.currentFitness = result.getNeighborFitness();
-				this.iterationBestFound = evaluations;
+				copySolution(tmpSolution.getSolution(), bestSolution);
+				this.fitness = result.getNeighborFitness();
+				this.restartBestFound = randomRestartCount;
 			}
 
 		} while (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR);
@@ -272,59 +266,25 @@ public class IteratedLocalSearch
 	}
 
 	/**
-	 * Main loop of the algorithm
+	 * Executes the Hill Climbing search with random restarts
 	 */
 	public boolean[] execute() throws Exception
 	{
 		int customerCount = project.getCustomerCount();
-
-		this.currentSolution = constructor.generateSolution();
+		this.bestSolution = constructor.generateSolution();
 		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs);
+		hcrs.setAllCustomers(bestSolution);
+		this.fitness = evaluate(hcrs);
 
-		boolean[] bestSol = new boolean[customerCount];
-		localSearch(currentSolution);
-		copySolution(currentSolution, bestSol);
-		double bestFitness = this.currentFitness;
+		boolean[] solution = new boolean[customerCount];
+		copySolution(bestSolution, solution);
 
-		while (evaluations < maxEvaluations)
+		while (localSearch(solution))
 		{
-			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
-			localSearch(perturbedSolution);
-
-			if (shouldAccept(currentFitness, bestFitness))
-			{
-				copySolution(currentSolution, bestSol);
-				bestFitness = this.currentFitness;
-			}
+			this.randomRestartCount++;
+			solution = constructor.generateSolution();
 		}
 
-		return bestSol;
-	}
-
-	/**
-	 * Applies the perturbation operator upon a solution
-	 */
-	protected boolean[] perturbSolution(boolean[] solution, int customerCount)
-	{
-		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
-		int amount = 2;
-
-		for (int i = 0; i < amount; i++)
-		{
-			int customer = PseudoRandom.randInt(0, customerCount);
-			newSolution[customer] = !newSolution[customer];
-		}
-
-		return newSolution;
-	}
-
-	/**
-	 * Determines whether should accept a given solution
-	 */
-	protected boolean shouldAccept(double solutionFitness, double bestFitness)
-	{
-		return solutionFitness > bestFitness;
+		return bestSolution;
 	}
 }

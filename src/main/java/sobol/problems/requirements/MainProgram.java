@@ -8,7 +8,7 @@ import java.util.Vector;
 
 import sobol.problems.requirements.algorithm.constructor.Constructor;
 import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
-import sobol.problems.requirements.algorithm.ils.VisIteratedLocalSearch;
+import sobol.problems.requirements.algorithm.search.VisIteratedLocalSearch;
 import sobol.problems.requirements.model.Project;
 import sobol.problems.requirements.reader.RequirementReader;
 

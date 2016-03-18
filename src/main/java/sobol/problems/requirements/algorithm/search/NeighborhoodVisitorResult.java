@@ -1,4 +1,4 @@
-package sobol.problems.requirements.algorithm.localsearch;
+package sobol.problems.requirements.algorithm.search;
 
 
 /**
