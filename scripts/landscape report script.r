@@ -1,7 +1,11 @@
 plotInstance <- function(name) {
 
-	filename <- paste("~/Desktop/Codigos/VisualNRP/results/landscape/", name, ".txt", sep="")
-	data <- read.table(filename, sep=",", header=TRUE)
+	basedir <- "/Users/marcio.barros"
+	# basedir <- "~"
+	
+	zipfile <- paste(basedir, "/Desktop/Codigos/VisualNRP/results/landscape/landscape.zip", sep="")
+	datafile <- paste(name, ".txt", sep="")
+	data <- read.table(unz(zipfile, datafile), sep=",", header=TRUE)
 
 	par(mfrow=c(3, 1))
 
