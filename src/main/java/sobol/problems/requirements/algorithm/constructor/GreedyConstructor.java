@@ -58,7 +58,7 @@ public class GreedyConstructor implements Constructor
 	public boolean[] generateSolution()
 	{
 		int customerCount = project.getCustomerCount();
-		int numberOfCustomers = PseudoRandom.randInt(1, customerCount + 1);
+		int numberOfCustomers = PseudoRandom.randInt(1, customerCount);
 		return generateSolutionWith(numberOfCustomers);
 	}
 
@@ -88,7 +88,7 @@ public class GreedyConstructor implements Constructor
 	 */
 	public boolean[] generateSolutionInInterval(int minCustomers, int maxCustomers)
 	{
-		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers + 1);
+		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers);
 		return generateSolutionWith(numberOfCustomers);
 	}
 
@@ -101,7 +101,7 @@ public class GreedyConstructor implements Constructor
 		int[] cumulative = computeCumulativeWeights(weights);
 		int totalWeight = cumulative[cumulative.length-1]; 
 				
-		int rand = PseudoRandom.randInt(0, totalWeight);
+		int rand = PseudoRandom.randInt(0, totalWeight-1);
 		int pos = Arrays.binarySearch(cumulative, rand);
 		
 		if (pos < 0)

@@ -227,4 +227,28 @@ public class Solution
 				cost -= project.getRequirementCost(requirementIndex);
 		}
 	}
+
+	/**
+	 * Prints a solution into a string
+	 */
+	public static String printSolution(boolean[] solution)
+	{
+		String s = "[" + (solution[0] ? "S" : "-");
+
+		for (int i = 1; i < solution.length; i++)
+			s += (solution[i] ? "S" : "-");
+
+		return s + "]";
+	}
+
+	/**
+	 * Copies a source solution to a target one
+	 */
+	public static void copySolution(boolean[] source, boolean[] target)
+	{
+		int len = source.length;
+
+		for (int i = 0; i < len; i++)
+			target[i] = source[i];
+	}
 }

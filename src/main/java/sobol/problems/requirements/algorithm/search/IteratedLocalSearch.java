@@ -11,7 +11,7 @@ import sobol.problems.requirements.model.Project;
 /**
  * Iterated Local Search for the next release problem
  */
-public class IteratedLocalSearch
+public class IteratedLocalSearch implements SearchAlgorithm
 {
 	/**
 	 * Order under which requirements will be accessed
@@ -162,34 +162,6 @@ public class IteratedLocalSearch
 	}
 
 	/**
-	 * Prints a solution into a string
-	 */
-	public String printSolution(boolean[] solution)
-	{
-		String s = "[" + (solution[0] ? "S" : "-");
-
-		for (int i = 1; i < solution.length; i++)
-		{
-			s += " " + (solution[i] ? "S" : "-");
-		}
-
-		return s + "]";
-	}
-
-	/**
-	 * Copies a source solution to a target one
-	 */
-	protected void copySolution(boolean[] source, boolean[] target)
-	{
-		int len = source.length;
-
-		for (int i = 0; i < len; i++)
-		{
-			target[i] = source[i];
-		}
-	}
-
-	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
 	protected double evaluate(Solution solution)
@@ -259,7 +231,7 @@ public class IteratedLocalSearch
 
 			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
 			{
-				copySolution(tmpSolution.getSolution(), currentSolution);
+				Solution.copySolution(tmpSolution.getSolution(), currentSolution);
 				this.currentFitness = result.getNeighborFitness();
 				this.iterationBestFound = evaluations;
 			}
@@ -283,7 +255,7 @@ public class IteratedLocalSearch
 
 		boolean[] bestSol = new boolean[customerCount];
 		localSearch(currentSolution);
-		copySolution(currentSolution, bestSol);
+		Solution.copySolution(currentSolution, bestSol);
 		double bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
@@ -293,7 +265,7 @@ public class IteratedLocalSearch
 
 			if (shouldAccept(currentFitness, bestFitness))
 			{
-				copySolution(currentSolution, bestSol);
+				Solution.copySolution(currentSolution, bestSol);
 				bestFitness = this.currentFitness;
 			}
 		}
@@ -311,7 +283,7 @@ public class IteratedLocalSearch
 
 		for (int i = 0; i < amount; i++)
 		{
-			int customer = PseudoRandom.randInt(0, customerCount);
+			int customer = PseudoRandom.randInt(0, customerCount-1);
 			newSolution[customer] = !newSolution[customer];
 		}
 

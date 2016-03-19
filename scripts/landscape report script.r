@@ -1,6 +1,7 @@
 plotInstance <- function(name) {
 
-	basedir <- "/Users/marcio.barros"
+	basedir <- "/Users/marcio"
+	# basedir <- "/Users/marcio.barros"
 	# basedir <- "~"
 	
 	zipfile <- paste(basedir, "/Desktop/Codigos/VisualNRP/results/landscape/landscape.zip", sep="")

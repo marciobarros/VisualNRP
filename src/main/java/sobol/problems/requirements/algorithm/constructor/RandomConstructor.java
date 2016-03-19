@@ -55,7 +55,7 @@ public class RandomConstructor implements Constructor
 
 		for (int i = 1; i <= numberOfCustomers; i++)
 		{
-			int position = PseudoRandom.randInt(0, listOfPossibilities.size());
+			int position = PseudoRandom.randInt(0, listOfPossibilities.size()-1);
 			int value = listOfPossibilities.remove(position);
 			solution[value] = true;
 		}
@@ -68,7 +68,7 @@ public class RandomConstructor implements Constructor
 	 */
 	public boolean[] generateSolutionInInterval(int minCustomers, int maxCustomers)
 	{
-		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers + 1);
+		int numberOfCustomers = PseudoRandom.randInt(minCustomers, maxCustomers);
 		return generateSolutionWith(numberOfCustomers);
 	}
 

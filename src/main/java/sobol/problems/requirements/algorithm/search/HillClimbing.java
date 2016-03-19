@@ -12,7 +12,7 @@ import sobol.problems.requirements.model.Project;
  * 
  * @author Marcio Barros
  */
-public class HillClimbing
+public class HillClimbing implements SearchAlgorithm
 {
 	/**
 	 * Order under which requirements will be accessed
@@ -172,27 +172,19 @@ public class HillClimbing
 	}
 
 	/**
-	 * Prints a solution into a string
+	 * Returns the number of iterations executed
 	 */
-	public String printSolution(boolean[] solution)
+	public int getIterations()
 	{
-		String s = "[" + (solution[0] ? "S" : "-");
-
-		for (int i = 1; i < solution.length; i++)
-			s += " " + (solution[i] ? "S" : "-");
-
-		return s + "]";
+		return 0;
 	}
 
 	/**
-	 * Copies a source solution to a target one
+	 * Returns the iteration on which the best solution was found
 	 */
-	protected void copySolution(boolean[] source, boolean[] target)
+	public int getIterationBestFound() 
 	{
-		int len = source.length;
-
-		for (int i = 0; i < len; i++)
-			target[i] = source[i];
+		return 0;
 	}
 
 	/**
@@ -255,7 +247,7 @@ public class HillClimbing
 
 			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > fitness)
 			{
-				copySolution(tmpSolution.getSolution(), bestSolution);
+				Solution.copySolution(tmpSolution.getSolution(), bestSolution);
 				this.fitness = result.getNeighborFitness();
 				this.restartBestFound = randomRestartCount;
 			}
@@ -277,7 +269,7 @@ public class HillClimbing
 		this.fitness = evaluate(hcrs);
 
 		boolean[] solution = new boolean[customerCount];
-		copySolution(bestSolution, solution);
+		Solution.copySolution(bestSolution, solution);
 
 		while (localSearch(solution))
 		{

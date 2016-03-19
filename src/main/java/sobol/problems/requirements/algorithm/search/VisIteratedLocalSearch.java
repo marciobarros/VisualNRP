@@ -42,7 +42,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		this.currentFitness = evaluate(hcrs);
 
 		localSearch(currentSolution);
-		copySolution(currentSolution, bestSol);
+		Solution.copySolution(currentSolution, bestSol);
 		bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
@@ -52,7 +52,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 
 			if (shouldAccept(currentFitness, bestFitness))
 			{
-				copySolution(currentSolution, bestSol);
+				Solution.copySolution(currentSolution, bestSol);
 				bestFitness = this.currentFitness;
 			}
 		}
@@ -98,13 +98,13 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 			
 			if (isAddOperation)
 			{
-				int rand = PseudoRandom.randInt(0, notSatisfied.size());
+				int rand = PseudoRandom.randInt(0, notSatisfied.size()-1);
 				customer = notSatisfied.remove(rand);
 				satisfied.add(rand);
 			} 
 			else
 			{
-				int rand = PseudoRandom.randInt(0, satisfied.size());
+				int rand = PseudoRandom.randInt(0, satisfied.size()-1);
 				customer = satisfied.remove(rand);
 				notSatisfied.add(rand);
 			}
@@ -131,7 +131,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 
 				if (solFitness > this.bestFitness)
 				{
-					copySolution(solution, this.bestSol);
+					Solution.copySolution(solution, this.bestSol);
 					this.bestFitness = solFitness;
 					this.iterationBestFound = evaluations;
 					numberOfCustomersBest = numElemens;
@@ -159,7 +159,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 
 		int len = project.getCustomerCount();
 		boolean[] solutionAsArray = new boolean[len];
-		copySolution(solution.getSolution(), solutionAsArray);
+		Solution.copySolution(solution.getSolution(), solutionAsArray);
 
 		for (int i = 0; i < len; i++)
 		{
