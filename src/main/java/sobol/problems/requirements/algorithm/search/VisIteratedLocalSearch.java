@@ -7,7 +7,7 @@ import java.util.List;
 
 import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
+import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
 import sobol.problems.requirements.algorithm.solution.Solution;
 import sobol.problems.requirements.model.Project;
 
@@ -66,7 +66,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * A constructor algorithm for initial solutions generation.
 	 */
-//	private Constructor constructor;
+	private Constructor constructor;
 
 
 	private double bestFitness;
@@ -84,7 +84,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		this.evaluations = 0;
 		this.iterationBestFound = 0;
 		this.tmpSolution = new Solution(project);
-//		this.constructor = constructor;
+		this.constructor = constructor;
 		createRandomSelectionOrder(project);
 		this.numberSamplingIter = numberSamplingIter;
 	}
@@ -140,10 +140,11 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		bestSol = new boolean[customerCount];
 
 		this.minCustomers = executeRandomSampling(numberSamplingIter, project);
-		this.maxCustomers = customerCount; // calculateIntervalMax(minCustomers, intervalSize, customerCount);
+		this.maxCustomers = customerCount;
 
-		this.currentSolution = new boolean[customerCount];
-		Solution.copySolution(bestSol, currentSolution); //constructor.generateSolutionInInterval(minCustomers, maxCustomers);
+//		this.currentSolution = new boolean[customerCount];
+//		Solution.copySolution(bestSol, currentSolution);
+		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
 		
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
@@ -264,7 +265,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	{
 		int numberOfCustomersBest = 0;
 		Solution hcrs = new Solution(project);
-		Constructor sampConstructor = new GreedyConstructor(project);
+		Constructor sampConstructor = new RandomConstructor(project);
 
 		for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++)
 		{
