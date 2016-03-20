@@ -142,9 +142,9 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		this.minCustomers = executeRandomSampling(numberSamplingIter, project);
 		this.maxCustomers = customerCount;
 
-//		this.currentSolution = new boolean[customerCount];
-//		Solution.copySolution(bestSol, currentSolution);
-		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
+		this.currentSolution = new boolean[customerCount];
+		Solution.copySolution(bestSol, currentSolution);
+		//this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
 		
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
