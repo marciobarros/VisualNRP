@@ -20,19 +20,23 @@ import sobol.problems.requirements.reader.RequirementReader;
  */
 public class MainProgram
 {
-	private static int CYCLES = 100;
+	private static int CYCLES = 30;
 	
 	private static int MAXEVALUATIONS = 10000000;
 	
 	private static int SAMPLE_SIZE = 10;
 	
-	private static String[] instanceFilenames =
+	private static String[] classicInstanceFilenames =
 	{
 		"data/requirements/classic/nrp1.txt",
 		"data/requirements/classic/nrp2.txt",
 		"data/requirements/classic/nrp3.txt",
 		"data/requirements/classic/nrp4.txt",
-		"data/requirements/classic/nrp5.txt",
+		"data/requirements/classic/nrp5.txt"
+	};
+	
+	private static String[] realisticInstanceFilenames =
+	{
 		"data/requirements/realistic/nrp-e1.txt",
 		"data/requirements/realistic/nrp-e2.txt",
 		"data/requirements/realistic/nrp-e3.txt",
@@ -74,6 +78,7 @@ public class MainProgram
 		name = name + "-" + ((int)(budgetFactor * 100));
 
 		double sum = 0.0;
+		double max = 0;
 		
 		for (int i = 0; i < CYCLES; i++)
 		{
@@ -91,10 +96,11 @@ public class MainProgram
 			outWriter.println(s);
 			
 			sum += algorithm.getFitness();
+			if (algorithm.getFitness() > max) max = algorithm.getFitness();
 			System.out.print("*");
 		}
 
-		System.out.println(type.name() + "\t" + name + "\t" + (sum/CYCLES));
+		System.out.println(type.name() + "\t" + name + "\t" + (sum/CYCLES) + "\t" + max);
 	}
 
 	private void runInstances(String[] filenames) throws Exception
@@ -119,7 +125,7 @@ public class MainProgram
 
 	public static void main(String[] args) throws Exception
 	{
-		new MainProgram().runInstances(instanceFilenames);
-//		new LandscapeReport().createLandscapes(instanceFilenames);
+		new MainProgram().runInstances(classicInstanceFilenames);
+//		new LandscapeReport().createLandscapes(classicInstanceFilenames);
 	}
 }
