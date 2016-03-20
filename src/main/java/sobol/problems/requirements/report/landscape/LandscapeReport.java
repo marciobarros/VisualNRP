@@ -4,8 +4,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
-import sobol.problems.requirements.algorithm.solution.Solution;
+import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
 import sobol.problems.requirements.model.Project;
 import sobol.problems.requirements.reader.RequirementReader;
 
@@ -23,19 +22,15 @@ public class LandscapeReport
 	 */
 	private void createLandscapeForBudget(PrintWriter out, Project project, Constructor constructor, int budgetFactor) throws Exception
 	{
-		double availableBudget = project.getTotalCost() * budgetFactor / 100.0;
+		double availableBudget = project.getTotalCost() * (budgetFactor / 100.0);
 
 		for (int i = 1; i <= project.getCustomerCount(); i++)
 		{
 			for (int j = 0; j < CYCLES; j++)
 			{
 				boolean[] solution = constructor.generateSolutionWith(i);
-				Solution sol = new Solution(project);
-//				int cost = project.calculateCost(solution);
-//				int profit = project.calculateProfit(solution);
-				sol.setAllCustomers(solution);
-				int cost = sol.getCost();
-				int profit = sol.getProfit();
+				int cost = project.calculateCost(solution);
+				int profit = project.calculateProfit(solution);
 				int fitness = (cost <= availableBudget) ? profit : -cost;
 				out.println(budgetFactor + "," + i + "," + fitness);
 			}
@@ -71,7 +66,7 @@ public class LandscapeReport
 			System.out.println("Processando " + project.getName() + " ...");
 			
 			String landscapeFilename = "results/landscape/" + filename.substring(filename.lastIndexOf('/')+1);
-			Constructor constructor = new GreedyConstructor(project);
+			Constructor constructor = new RandomConstructor(project);
 			createLandscape(landscapeFilename, project, constructor);
 		}
 	}

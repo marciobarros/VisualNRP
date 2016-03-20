@@ -63,7 +63,12 @@ public class HillClimbing implements SearchAlgorithm
 	 * Number of fitness evaluations executed
 	 */
 	protected int evaluations;
-
+	
+	/**
+	 * Number of iterations to best solution
+	 */
+	private int iterationBestFound;
+	
 	/**
 	 * Represents a solution of the problem. Utilized during the local search
 	 */
@@ -86,6 +91,7 @@ public class HillClimbing implements SearchAlgorithm
 		this.evaluations = 0;
 		this.randomRestartCount = 0;
 		this.restartBestFound = 0;
+		this.iterationBestFound = 0;
 		this.tmpSolution = new Solution(project);
 		this.constructor = constructor;
 		createRandomSelectionOrder(project);
@@ -184,7 +190,7 @@ public class HillClimbing implements SearchAlgorithm
 	 */
 	public int getIterationBestFound() 
 	{
-		return 0;
+		return iterationBestFound;
 	}
 
 	/**
@@ -193,7 +199,9 @@ public class HillClimbing implements SearchAlgorithm
 	protected double evaluate(Solution solution)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
+		{
 			detailsFile.println(evaluations + "; " + fitness);
+		}
 
 		int cost = solution.getCost();
 		return (cost <= availableBudget) ? solution.getProfit() : -cost;
@@ -207,10 +215,14 @@ public class HillClimbing implements SearchAlgorithm
 		double startingFitness = evaluate(solution);
 
 		if (evaluations > maxEvaluations)
+		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
+		}
 
 		if (startingFitness > fitness)
+		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
+		}
 
 		int len = project.getCustomerCount();
 
@@ -222,10 +234,14 @@ public class HillClimbing implements SearchAlgorithm
 			double neighborFitness = evaluate(solution);
 
 			if (evaluations > maxEvaluations)
+			{
 				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
+			}
 
 			if (neighborFitness > startingFitness)
+			{
 				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
+			}
 
 			solution.flipCustomer(customerI);
 		}
@@ -249,7 +265,7 @@ public class HillClimbing implements SearchAlgorithm
 			{
 				Solution.copySolution(tmpSolution.getSolution(), bestSolution);
 				this.fitness = result.getNeighborFitness();
-				this.restartBestFound = randomRestartCount;
+				this.iterationBestFound = evaluations;
 			}
 
 		} while (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR);
@@ -262,14 +278,14 @@ public class HillClimbing implements SearchAlgorithm
 	 */
 	public boolean[] execute() throws Exception
 	{
-		int customerCount = project.getCustomerCount();
 		this.bestSolution = constructor.generateSolution();
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(bestSolution);
 		this.fitness = evaluate(hcrs);
 
+		int customerCount = project.getCustomerCount();
 		boolean[] solution = new boolean[customerCount];
-		Solution.copySolution(bestSolution, solution);
+		Solution.copySolution(hcrs.getSolution(), solution);
 
 		while (localSearch(solution))
 		{

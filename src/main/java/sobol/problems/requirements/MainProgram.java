@@ -49,10 +49,10 @@ public class MainProgram
 	
 	enum Algorithm { VISILS, ILS, HC }
 
-	private SearchAlgorithm createAlgorithm(Algorithm type, PrintWriter detailsWriter, Project project, int budget, float intervalSize, Constructor constructor) throws Exception
+	private SearchAlgorithm createAlgorithm(Algorithm type, PrintWriter detailsWriter, Project project, int budget, Constructor constructor) throws Exception
 	{
 		if (type == Algorithm.VISILS)
-			return new VisIteratedLocalSearch(detailsWriter, project, budget, MAXEVALUATIONS, SAMPLE_SIZE, intervalSize, constructor);
+			return new VisIteratedLocalSearch(detailsWriter, project, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
 		
 		if (type == Algorithm.ILS)
 			return new IteratedLocalSearch(detailsWriter, project, budget, MAXEVALUATIONS, constructor);
@@ -63,7 +63,7 @@ public class MainProgram
 		return null;
 	}
 
-	private void runInstance(PrintWriter outWriter, PrintWriter detailsWriter, Algorithm type, Project project, double budgetFactor, float intervalSize) throws Exception
+	private void runInstance(PrintWriter outWriter, PrintWriter detailsWriter, Algorithm type, Project project, double budgetFactor) throws Exception
 	{
 		Constructor constructor = new GreedyConstructor(project);
 		int budget = (int) (budgetFactor * project.getTotalCost());
@@ -73,9 +73,11 @@ public class MainProgram
 		name = name.substring(0, name.lastIndexOf('.'));
 		name = name + "-" + ((int)(budgetFactor * 100));
 
+		double sum = 0.0;
+		
 		for (int i = 0; i < CYCLES; i++)
 		{
-			SearchAlgorithm algorithm = createAlgorithm(type, detailsWriter, project, budget, intervalSize, constructor);
+			SearchAlgorithm algorithm = createAlgorithm(type, detailsWriter, project, budget, constructor);
 
 			long initTime = System.currentTimeMillis();
 			detailsWriter.println(type.name() + " " + project.getName() + " #" + CYCLES);
@@ -86,10 +88,13 @@ public class MainProgram
 			String s = type.name() + "; " + name + "; " + i + "; " + executionTime + "; ";
 			s += algorithm.getFitness() + "; " + algorithm.getIterationBestFound() + "; ";
 			s += Solution.printSolution(solution);
-			
-			System.out.println(s);
 			outWriter.println(s);
+			
+			sum += algorithm.getFitness();
+			System.out.print("*");
 		}
+
+		System.out.println(type.name() + "\t" + name + "\t" + (sum/CYCLES));
 	}
 
 	private void runInstances(String[] filenames) throws Exception
@@ -105,7 +110,7 @@ public class MainProgram
 			Project project = reader.execute();
 			
 			for (double budgetFactor : budgetFactors)
-				runInstance(outWriter, detailsWriter, Algorithm.VISILS, project, budgetFactor, 1.0f);
+				runInstance(outWriter, detailsWriter, Algorithm.VISILS, project, budgetFactor);
 		}
 		
 		outWriter.close();

@@ -244,7 +244,9 @@ public class Project
 	 */
 	private void addCustomerRequirements(int customer, boolean[] requirements)
 	{
-		for (int j = 0; j < customerRequirements[customer].length; j++)
+		int len = customerRequirements[customer].length;
+		
+		for (int j = 0; j < len; j++)
 		{
 			int requirement = customerRequirements[customer][j];
 			
@@ -262,8 +264,10 @@ public class Project
 		
 		if (requirementDependencySources[requirement] == null)
 			return;
+		
+		int len = requirementDependencySources[requirement].length;
 			
-		for (int k = 0; k < requirementDependencySources[requirement].length; k++)
+		for (int k = 0; k < len; k++)
 		{
 			int source = requirementDependencySources[requirement][k];
 			

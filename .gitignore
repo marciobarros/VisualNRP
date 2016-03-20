@@ -6,3 +6,5 @@ manifest.mf
 nbproject/
 target/
 /bin/
+/saida.txt
+/saida details.txt

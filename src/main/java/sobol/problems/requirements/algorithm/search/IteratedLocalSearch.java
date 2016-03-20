@@ -16,57 +16,57 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Order under which requirements will be accessed
 	 */
-	protected int[] selectionOrder;
+	private int[] selectionOrder;
 	
 	/**
 	 * Solution being visited
 	 */
-	protected boolean[] currentSolution;
+	private boolean[] currentSolution;
 	
 	/**
 	 * Fitness of the solution being visited
 	 */
-	protected double currentFitness;
+	private double currentFitness;
 	
 	/**
 	 * Number of the random restart where the best solution was found
 	 */
-	protected int iterationBestFound;
+	private int iterationBestFound;
 	
 	/**
 	 * File where details of the search process will be printed
 	 */
-	protected PrintWriter detailsFile;
+	private PrintWriter detailsFile;
 	
 	/**
 	 * Set of requirements to be optimized
 	 */
-	protected Project project;
+	private Project project;
 	
 	/**
 	 * Available budget to select requirements
 	 */
-	protected int availableBudget;
+	private int availableBudget;
 	
 	/**
 	 * Number of fitness evaluations available in the budget
 	 */
-	protected int maxEvaluations;
+	private int maxEvaluations;
 	
 	/**
 	 * Number of fitness evaluations executed
 	 */
-	protected int evaluations;
+	private int evaluations;
 	
 	/**
 	 * Represents a solution of the problem. Utilized during the local search
 	 */
-	protected Solution tmpSolution;
+	private Solution tmpSolution;
 	
 	/**
 	 * A constructor algorithm for initial solutions generation.
 	 */
-	protected Constructor constructor;
+	private Constructor constructor;
 
 	/**
 	 * Initializes the Hill Climbing search process
@@ -87,7 +87,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Gera uma ordem aleatoria de selecao dos requisitos
 	 */
-	protected void createRandomSelectionOrder(Project project)
+	private void createRandomSelectionOrder(Project project)
 	{
 		int customerCount = project.getCustomerCount();
 		int[] temporaryOrder = new int[customerCount];
@@ -164,7 +164,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
-	protected double evaluate(Solution solution)
+	private double evaluate(Solution solution)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
 		{
@@ -178,7 +178,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Runs a neighborhood visit starting from a given solution
 	 */
-	protected NeighborhoodVisitorResult visitNeighbors(Solution solution)
+	private NeighborhoodVisitorResult visitNeighbors(Solution solution)
 	{
 		double startingFitness = evaluate(solution);
 
@@ -220,7 +220,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Performs the local search starting from a given solution
 	 */
-	protected boolean localSearch(boolean[] solution)
+	private boolean localSearch(boolean[] solution)
 	{
 		NeighborhoodVisitorResult result;
 		tmpSolution.setAllCustomers(solution);
@@ -276,7 +276,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Applies the perturbation operator upon a solution
 	 */
-	protected boolean[] perturbSolution(boolean[] solution, int customerCount)
+	private boolean[] perturbSolution(boolean[] solution, int customerCount)
 	{
 		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
 		int amount = 2;
@@ -293,7 +293,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Determines whether should accept a given solution
 	 */
-	protected boolean shouldAccept(double solutionFitness, double bestFitness)
+	private boolean shouldAccept(double solutionFitness, double bestFitness)
 	{
 		return solutionFitness > bestFitness;
 	}

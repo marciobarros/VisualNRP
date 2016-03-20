@@ -11,32 +11,140 @@ import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
 import sobol.problems.requirements.algorithm.solution.Solution;
 import sobol.problems.requirements.model.Project;
 
-public class VisIteratedLocalSearch extends IteratedLocalSearch
+public class VisIteratedLocalSearch implements SearchAlgorithm
 {
+	/**
+	 * Order under which requirements will be accessed
+	 */
+	private int[] selectionOrder;
+	
+	/**
+	 * Solution being visited
+	 */
+	private boolean[] currentSolution;
+	
+	/**
+	 * Fitness of the solution being visited
+	 */
+	private double currentFitness;
+	
+	/**
+	 * Number of the random restart where the best solution was found
+	 */
+	private int iterationBestFound;
+	
+	/**
+	 * File where details of the search process will be printed
+	 */
+	private PrintWriter detailsFile;
+	
+	/**
+	 * Set of requirements to be optimized
+	 */
+	private Project project;
+	
+	/**
+	 * Available budget to select requirements
+	 */
+	private int availableBudget;
+	
+	/**
+	 * Number of fitness evaluations available in the budget
+	 */
+	private int maxEvaluations;
+	
+	/**
+	 * Number of fitness evaluations executed
+	 */
+	private int evaluations;
+	
+	/**
+	 * Represents a solution of the problem. Utilized during the local search
+	 */
+	private Solution tmpSolution;
+	
+	/**
+	 * A constructor algorithm for initial solutions generation.
+	 */
+//	private Constructor constructor;
+
+
 	private double bestFitness;
 	private boolean[] bestSol;
 	private int minCustomers;
 	private int maxCustomers;
 	private final int numberSamplingIter;
-	private final float intervalSize;
 
-	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, int numberSamplingIter, float intervalSize, Constructor constructor) throws Exception
+	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
 	{
-		super(detailsFile, project, budget, maxEvaluations, constructor);
+		this.project = project;
+		this.availableBudget = budget;
+		this.maxEvaluations = maxEvaluations;
+		this.detailsFile = detailsFile;
+		this.evaluations = 0;
+		this.iterationBestFound = 0;
+		this.tmpSolution = new Solution(project);
+//		this.constructor = constructor;
+		createRandomSelectionOrder(project);
 		this.numberSamplingIter = numberSamplingIter;
-		this.intervalSize = intervalSize;
 	}
 
-	@Override
+	/**
+	 * Gera uma ordem aleatoria de selecao dos requisitos
+	 */
+	private void createRandomSelectionOrder(Project project)
+	{
+		int customerCount = project.getCustomerCount();
+		int[] temporaryOrder = new int[customerCount];
+
+		for (int i = 0; i < customerCount; i++)
+		{
+			temporaryOrder[i] = i;
+		}
+
+		this.selectionOrder = new int[customerCount];
+
+		for (int i = 0; i < customerCount; i++)
+		{
+			int index = (int) (PseudoRandom.randDouble() * (customerCount - i));
+			this.selectionOrder[i] = temporaryOrder[index];
+
+			for (int j = index; j < customerCount - 1; j++)
+			{
+				temporaryOrder[j] = temporaryOrder[j + 1];
+			}
+		}
+
+		for (int i = 0; i < customerCount; i++)
+		{
+			boolean achou = false;
+
+			for (int j = 0; j < customerCount && !achou; j++)
+			{
+				if (this.selectionOrder[j] == i)
+				{
+					achou = true;
+				}
+			}
+
+			if (!achou)
+			{
+				System.out.println("ERRO DE GERACAO DE INICIO ALEATORIO");
+			}
+		}
+	}
+
 	public boolean[] execute() throws Exception
 	{
 		int customerCount = project.getCustomerCount();
 		bestSol = new boolean[customerCount];
 
 		this.minCustomers = executeRandomSampling(numberSamplingIter, project);
-		this.maxCustomers = calculateIntervalMax(minCustomers, intervalSize, customerCount);
+		this.maxCustomers = customerCount; // calculateIntervalMax(minCustomers, intervalSize, customerCount);
 
-		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, maxCustomers);
+		this.currentSolution = new boolean[customerCount];
+		Solution.copySolution(bestSol, currentSolution); //constructor.generateSolutionInInterval(minCustomers, maxCustomers);
+		
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
 		this.currentFitness = evaluate(hcrs);
@@ -60,8 +168,45 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		return bestSol;
 	}
 
-	@Override
-	protected boolean[] perturbSolution(boolean[] solution, int customerCount)
+	/**
+	 * Evaluates the fitness of a solution, saving detail information
+	 */
+	private double evaluate(Solution solution)
+	{
+		if (++evaluations % 10000 == 0 && detailsFile != null)
+		{
+			detailsFile.println(evaluations + "; " + currentFitness);
+		}
+
+		int cost = solution.getCost();
+		return (cost <= availableBudget) ? solution.getProfit() : -cost;
+	}
+
+	/**
+	 * Performs the local search starting from a given solution
+	 */
+	private boolean localSearch(boolean[] solution)
+	{
+		NeighborhoodVisitorResult result;
+		tmpSolution.setAllCustomers(solution);
+
+		do
+		{
+			result = visitNeighbors(tmpSolution);
+
+			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
+			{
+				Solution.copySolution(tmpSolution.getSolution(), currentSolution);
+				this.currentFitness = result.getNeighborFitness();
+				this.iterationBestFound = evaluations;
+			}
+
+		} while (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR);
+
+		return (result.getStatus() == NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
+	}
+
+	private boolean[] perturbSolution(boolean[] solution, int customerCount)
 	{
 		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
 		int amount = 2;
@@ -142,8 +287,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		return numberOfCustomersBest;
 	}
 
-	@Override
-	protected NeighborhoodVisitorResult visitNeighbors(Solution solution)
+	private NeighborhoodVisitorResult visitNeighbors(Solution solution)
 	{
 		double startingFitness = evaluate(solution);
 
@@ -201,7 +345,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		return (satisfied.size() + 1) <= this.maxCustomers;
 	}
 
-	private int calculateIntervalMax(int numberCustomersBest, float intervalSize, int customerCount)
+	/*private int calculateIntervalMax(int numberCustomersBest, float intervalSize, int customerCount)
 	{
 		int size = Math.round(customerCount * intervalSize);
 		int maxNCustomers = numberCustomersBest + size;
@@ -212,7 +356,7 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		}
 		
 		return maxNCustomers;
-	}
+	}*/
 
 	private int numberOfCustomersServedBySolution(boolean[] solution)
 	{
@@ -227,5 +371,37 @@ public class VisIteratedLocalSearch extends IteratedLocalSearch
 		}
 
 		return count;
+	}
+
+	/**
+	 * Determines whether should accept a given solution
+	 */
+	private boolean shouldAccept(double solutionFitness, double bestFitness)
+	{
+		return solutionFitness > bestFitness;
+	}
+
+	/**
+	 * Returns the number of random restarts executed during the search process
+	 */
+	public int getIterations()
+	{
+		return evaluations;
+	}
+
+	/**
+	 * Returns the number of the restart in which the best solution was found
+	 */
+	public int getIterationBestFound()
+	{
+		return iterationBestFound;
+	}
+
+	/**
+	 * Returns the fitness of the best solution
+	 */
+	public double getFitness()
+	{
+		return currentFitness;
 	}
 }
