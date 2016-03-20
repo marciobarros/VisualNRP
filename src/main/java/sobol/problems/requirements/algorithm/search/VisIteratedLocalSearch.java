@@ -7,7 +7,7 @@ import java.util.List;
 
 import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
+import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
 import sobol.problems.requirements.algorithm.solution.Solution;
 import sobol.problems.requirements.model.Project;
 
@@ -264,7 +264,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	{
 		int numberOfCustomersBest = 0;
 		Solution hcrs = new Solution(project);
-		Constructor sampConstructor = new RandomConstructor(project);
+		Constructor sampConstructor = new GreedyConstructor(project);
 
 		for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++)
 		{
