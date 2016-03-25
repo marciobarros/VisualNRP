@@ -47,13 +47,16 @@ public class MainProgram
 	private void runLandscapeReport() throws Exception
 	{
 		new LandscapeReport()
-			.execute(classicInstanceFilenames, new double[] {0.3, 0.5, 0.7})
-			.execute(realisticInstanceFilenames, new double[] {0.3, 0.5});
+			.execute(classicInstanceFilenames, new int[] {30}, new int[] {20, 50, 80});
+		
+//		new LandscapeReport()
+//			.execute(classicInstanceFilenames, new int[] {30, 50, 70}, new int[] {0})
+//			.execute(realisticInstanceFilenames, new int[] {30, 50}, new int[] {0});
 	}
 
 	public static void main(String[] args) throws Exception
 	{
-		new MainProgram().runOptimizer();
-		//new MainProgram().runLandscapeReport();
+//		new MainProgram().runOptimizer();
+		new MainProgram().runLandscapeReport();
 	}
 }

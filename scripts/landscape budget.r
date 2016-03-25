@@ -1,8 +1,8 @@
 plotInstance <- function(name) {
 
-	basedir <- "/Users/marcio"
+	# basedir <- "/Users/marcio"
 	# basedir <- "/Users/marcio.barros"
-	# basedir <- "~"
+	basedir <- "~"
 	
 	zipfile <- paste(basedir, "/Desktop/Codigos/VisualNRP/results/landscape/landscape.zip", sep="")
 	datafile <- paste(name, ".txt", sep="")
