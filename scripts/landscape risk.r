@@ -34,4 +34,4 @@ plotInstance("nrp5");
 
 
 par(mfrow=c(3, 1))
-plotInstance("nrp5");
+plotInstance("nrp3");
