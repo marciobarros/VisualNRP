@@ -222,9 +222,9 @@ public class Project
 	/**
 	 * Returns the total customer related risk attained by the set of requirements
 	 */
-	public int getTotalCustomerRisk()
+	public double getTotalCustomerRisk()
 	{
-		int sum = 0;
+		double sum = 0;
 		
 		for (int i = 0; i < customerRisk.length; i++)
 			sum += customerRisk[i];
@@ -235,9 +235,9 @@ public class Project
 	/**
 	 * Returns the total requirement related risk attained by the set of requirements
 	 */
-	public int getTotalRequirementRisk()
+	public double getTotalRequirementRisk()
 	{
-		int sum = 0;
+		double sum = 0;
 		
 		for (int i = 0; i < requirementRisk.length; i++)
 			sum += requirementRisk[i];
@@ -366,7 +366,7 @@ public class Project
 	{
 		double sum = 0;
 		
-		for (int i = 0; i < customerProfits.length; i++)
+		for (int i = 0; i < customerRisk.length; i++)
 			if (customerSelection[i])
 				sum += customerRisk[i];
 		

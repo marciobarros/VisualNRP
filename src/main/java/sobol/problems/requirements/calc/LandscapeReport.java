@@ -31,13 +31,12 @@ public class LandscapeReport
 			return -cost / totalCost;
 
 		int profit = project.calculateProfit(solution);
+//		double risk = project.calculateCustomerRisk(solution);
+		double risk = project.calculateRequirementRisk(solution);
 		double alfa = riskImportance / 100.0;
 
-		double risk = project.calculateCustomerRisk(solution);
-		return (1 - alfa) * profit / totalProfit + alfa * risk / totalRisk;
-		
-//		double risk = project.calculateRequirementRisk(solution);
-//		return (1 - alfa) * profit / totalProfit + alfa * risk / totalRisk;
+		double fitness = (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;
+		return fitness;
 	}
 	
 	/**
@@ -69,8 +68,8 @@ public class LandscapeReport
 		out.println("budget,risk,cust,fit");
 		double totalProfit = project.getTotalProfit();
 		double totalCost = project.getTotalCost();
-		double totalRisk = project.getTotalCustomerRisk();
-//		double totalRisk = project.getTotalRequirementRisk();
+//		double totalRisk = project.getTotalCustomerRisk();
+		double totalRisk = project.getTotalRequirementRisk();
 		
 		for (int budgetFactor : budgetFactors)
 		{
