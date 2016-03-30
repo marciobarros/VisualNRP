@@ -286,9 +286,9 @@ public class Project
 	}
 	
 	/**
-	 * Calculates the cost of attending a set of customers
+	 * Gets all requirements desired by a customer (with dependencies)
 	 */
-	public int calculateCost(boolean[] customerSelection)
+	public boolean[] getCustomersRequirements(boolean[] customerSelection)
 	{
 		boolean[] requirements = new boolean[requirementCosts.length];
 		
@@ -298,6 +298,16 @@ public class Project
 		for (int i = 0; i < customerSelection.length; i++)
 			if (customerSelection[i])
 				addCustomerRequirements(i, requirements);
+		
+		return requirements;
+	}
+	
+	/**
+	 * Calculates the cost of attending a set of customers
+	 */
+	public int calculateCost(boolean[] customerSelection)
+	{
+		boolean[] requirements = getCustomersRequirements(customerSelection);
 		
 		int sum = 0;
 		

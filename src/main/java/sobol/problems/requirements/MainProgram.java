@@ -1,5 +1,6 @@
 package sobol.problems.requirements;
 
+import sobol.problems.requirements.calc.LandscapeReleasePlanning;
 import sobol.problems.requirements.calc.LandscapeReport;
 import sobol.problems.requirements.calc.Optimizer;
 
@@ -46,8 +47,10 @@ public class MainProgram
 
 	private void runLandscapeReport() throws Exception
 	{
-		new LandscapeReport()
-			.execute(classicInstanceFilenames, new int[] {30}, new int[] {20, 50, 80});
+		new LandscapeReleasePlanning().execute(classicInstanceFilenames[0]);
+
+//		new LandscapeReport()
+//			.execute(classicInstanceFilenames, new int[] {30}, new int[] {20, 50, 80});
 		
 //		new LandscapeReport()
 //			.execute(classicInstanceFilenames, new int[] {30, 50, 70}, new int[] {0})
