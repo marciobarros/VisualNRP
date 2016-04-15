@@ -27,6 +27,8 @@ public class CommandFactory
 	{
 		this.commands = new ArrayList<Command>();
 		this.commands.add(new CommandReleasePlanningLandscape());
+		this.commands.add(new CommandCostRiskLandscape());
+		this.commands.add(new CommandProfitRiskLandscape());
 	}
 	
 	/**
@@ -71,7 +73,7 @@ public class CommandFactory
 	public String generalHelp() 
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("Please, use the following commands:\n");
+		sb.append("Please, use one of the following commands:\n");
 
 		for (Command command : commands)
 			sb.append(command.getCode() + ": " + command.getDescription() + "\n");
@@ -85,7 +87,7 @@ public class CommandFactory
 	public String commandHelp(Command command) 
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append("Please, use the following parameters for the " + command.getCode() + " command:");
+		sb.append("Please, use the following parameters for the " + command.getCode() + " command:\n");
 		sb.append(command.help());
 		return sb.toString();
 	}

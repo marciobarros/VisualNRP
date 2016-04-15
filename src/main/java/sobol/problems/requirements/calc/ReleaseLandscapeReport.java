@@ -16,7 +16,7 @@ import sobol.problems.requirements.reader.RequirementReader;
  * 
  * @author marciobarros
  */
-public class LandscapeReleasePlanning
+public class ReleaseLandscapeReport
 {
 	/**
 	 * Number of solutions per costumer

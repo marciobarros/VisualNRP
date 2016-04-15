@@ -1,6 +1,6 @@
 package sobol.problems.requirements.command;
 
-import sobol.problems.requirements.calc.LandscapeReleasePlanning;
+import sobol.problems.requirements.calc.ReleaseLandscapeReport;
 import sobol.problems.requirements.instance.Instance;
 
 /**
@@ -45,7 +45,7 @@ class CommandReleasePlanningLandscape extends Command
 		if (instance == null)
 			throw new Exception("Instance '" + instanceName + "' not found.");
 		
-		return new LandscapeReleasePlanning().execute(instance, outputFilename);
+		return new ReleaseLandscapeReport().execute(instance, outputFilename);
 	}
 
 	/**

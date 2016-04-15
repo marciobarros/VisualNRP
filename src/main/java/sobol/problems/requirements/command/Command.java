@@ -70,19 +70,25 @@ public abstract class Command
 	/**
 	 * Returns all values for a given parameter
 	 */
-	protected Iterable<String> getParameterValues(String[] parameters, String identifier) throws Exception
+	protected String[] getParameterValues(String[] parameters, String identifier) throws Exception
 	{
-		List<String> values = new ArrayList<String>();
 		int index = getParameterIndex(parameters, identifier);
 		
 		if (index == -1)
-			throw new Exception("undefined parameter " + identifier);
+			throw new Exception("undefined parameter " + identifier + ". ");
 		
+		List<String> values = new ArrayList<String>();
+
 		for (int i = index+1; i < parameters.length; i++)
 			if (parameters[i].startsWith("-"))
 				values.add(parameters[i]);
+		
+		String[] result = new String[values.size()];
+		
+		for (int i = 0; i < values.size(); i++)
+			result[i] = values.get(i);
 
-		return values;
+		return result;
 	}
 
 	/**
@@ -106,19 +112,38 @@ public abstract class Command
 	/**
 	 * Returns all values for an optional parameter
 	 */
-	protected Iterable<String> getOptionalParameterValues(String[] parameters, String identifier)
+	protected String[] getOptionalParameterValues(String[] parameters, String identifier)
 	{
-		List<String> values = new ArrayList<String>();
 		int index = getParameterIndex(parameters, identifier);
 		
 		if (index == -1)
-			return values;
+			return new String[] {};
+
+		List<String> values = new ArrayList<String>();
 		
 		for (int i = index+1; i < parameters.length; i++)
 			if (parameters[i].startsWith("-"))
 				values.add(parameters[i]);
+		
+		String[] result = new String[values.size()];
+		
+		for (int i = 0; i < values.size(); i++)
+			result[i] = values.get(i);
 
-		return values;
+		return result;
+	}
+	
+	/**
+	 * Converte um vetor de strings em um vetor de inteiros
+	 */
+	protected int[] asIntegerArray(String[] values) throws Exception
+	{
+		int[] result = new int[values.length];
+		
+		for (int i = 0; i < values.length; i++)
+			result[i] = Integer.parseInt(values[i]);
+
+		return result;
 	}
 
 	/**
@@ -126,7 +151,7 @@ public abstract class Command
 	 */
 	protected void addParameterHelp(String identifier, String description)
 	{
-		commandHelp.append("\t" + identifier + "\t" + description);
+		commandHelp.append("\t" + identifier + "\t" + description + "\n");
 	}
 
 	/**
@@ -134,10 +159,10 @@ public abstract class Command
 	 */
 	protected void addParameterHelp(String identifier, String[] description)
 	{
-		commandHelp.append("\t" + identifier + "\t" + description[0]);
+		commandHelp.append("\t" + identifier + "\t" + description[0] + "\n");
 		
 		for (int i = 1; i < description.length; i++)
-			commandHelp.append("\t" + description[i]);
+			commandHelp.append("\t" + description[i] + "\n");
 	}
 	
 	/**

@@ -3,16 +3,17 @@ package sobol.problems.requirements.command;
 import java.util.ArrayList;
 import java.util.List;
 
+import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.calc.RiskLandscapeReport;
 import sobol.problems.requirements.instance.Instance;
 import sobol.problems.requirements.instance.InstanceCategory;
 
 /**
- * Class that represents the command that generates the profit risk landscape report
+ * Class that represents the command that generates the cost risk landscape report
  * 
  * @author Marcio
  */
-class CommandProfitRiskLandscape extends Command
+class CommandCostRiskLandscape extends Command
 {
 	private List<Instance> instances;
 	private int[] budgets;
@@ -22,9 +23,9 @@ class CommandProfitRiskLandscape extends Command
 	/**
 	 * Initializes the command
 	 */
-	public CommandProfitRiskLandscape()
+	public CommandCostRiskLandscape()
 	{
-		super("LPRR", "Landscape report for the profit risk problem");
+		super("LCRR", "Landscape report for the cost risk problem");
 		
 		this.instances = new ArrayList<Instance>();
 		this.budgets = null;
@@ -104,7 +105,7 @@ class CommandProfitRiskLandscape extends Command
 	@Override
 	public boolean run() throws Exception
 	{
-		new RiskLandscapeReport().executeProfitRisk(instances, budgets, riskLevels, outputFilename);
+		new RiskLandscapeReport().executeCostRisk(instances, budgets, riskLevels, outputFilename);
 		return false;
 	}
 
@@ -114,6 +115,6 @@ class CommandProfitRiskLandscape extends Command
 	@Override
 	public Command clone()
 	{
-		return new CommandProfitRiskLandscape();
+		return new CommandCostRiskLandscape();
 	}
 }

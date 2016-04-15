@@ -1,7 +1,7 @@
 package sobol.problems.requirements;
 
-import sobol.problems.requirements.calc.LandscapeReleasePlanning;
 import sobol.problems.requirements.calc.Optimizer;
+import sobol.problems.requirements.calc.ReleaseLandscapeReport;
 import sobol.problems.requirements.command.Command;
 import sobol.problems.requirements.command.CommandFactory;
 
@@ -21,21 +21,11 @@ public class MainProgram
 //			.execute(realisticInstanceFilenames, new double[] {0.3, 0.5});
 	}
 
-	private void runLandscapeReport() throws Exception
-	{
-//		new LandscapeReport()
-//			.execute(classicInstanceFilenames, new int[] {30}, new int[] {20, 50, 80});
-		
-//		new LandscapeReport()
-//			.execute(classicInstanceFilenames, new int[] {30, 50, 70}, new int[] {0})
-//			.execute(realisticInstanceFilenames, new int[] {30, 50}, new int[] {0});
-	}
-
 	public static void main(String[] args) throws Exception
 	{
 		if (args.length == 0)
 		{
-			System.out.println("Parameter missing. " + CommandFactory.getInstance().generalHelp());
+			System.out.println("Command missing. " + CommandFactory.getInstance().generalHelp());
 			return;
 		}
 		
