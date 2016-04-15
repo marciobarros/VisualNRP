@@ -7,6 +7,7 @@ import sobol.problems.requirements.algorithm.constructor.Constructor;
 import sobol.problems.requirements.algorithm.constructor.GreedyConstructor;
 import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
 import sobol.problems.requirements.algorithm.search.VisIteratedLocalSearch;
+import sobol.problems.requirements.instance.Instance;
 import sobol.problems.requirements.model.Project;
 import sobol.problems.requirements.reader.RequirementReader;
 
@@ -29,7 +30,7 @@ public class LandscapeReleasePlanning
 	/**
 	 * Creates the landscape reports without risk for all instances
 	 */
-	public LandscapeReleasePlanning execute(String instanceFilename) throws Exception
+	public boolean execute(Instance instance, String outputFilename) throws Exception
 	{
 		// TODO gravar vários rounds no mesmo arquivo
 		
@@ -41,7 +42,7 @@ public class LandscapeReleasePlanning
 		
 		// TODO tirar prefixo sobol dos pacotes
 		
-		RequirementReader reader = new RequirementReader(instanceFilename);
+		RequirementReader reader = new RequirementReader(instance.getFilename());
 		Project project = reader.execute();
 		System.out.println("Source: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
 
@@ -62,11 +63,11 @@ public class LandscapeReleasePlanning
 		System.out.println("Solution: profit=" + secondProject.calculateProfit(secondSolution) + "; cost=" + secondProject.calculateCost(secondSolution));
 		System.out.println("Target: profit=" + thirdProject.getTotalProfit() + "; cost=" + thirdProject.getTotalCost());
 
-		String landscapeFilename = "results/landscape/release/" + instanceFilename.substring(instanceFilename.lastIndexOf('/')+1);
+		String landscapeFilename = String.format(outputFilename, instance.getName());
 		Constructor constructorRandom = new RandomConstructor(thirdProject);
 		createLandscape(landscapeFilename, thirdProject, constructorRandom, 30);
 		
-		return this;
+		return false;
 	}
 
 	/**
