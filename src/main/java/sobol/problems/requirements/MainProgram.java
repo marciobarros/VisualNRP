@@ -21,6 +21,8 @@ public class MainProgram
 //			.execute(realisticInstanceFilenames, new double[] {0.3, 0.5});
 	}
 
+	// LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt
+	// LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt
 	public static void main(String[] args) throws Exception
 	{
 		if (args.length == 0)

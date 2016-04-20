@@ -3,7 +3,6 @@ package sobol.problems.requirements.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.calc.RiskLandscapeReport;
 import sobol.problems.requirements.instance.Instance;
 import sobol.problems.requirements.instance.InstanceCategory;
@@ -70,8 +69,10 @@ class CommandCostRiskLandscape extends Command
 				
 				Instance.addInstancesFromCategory(category, instances);
 			}
-			
-			instances.add(instance);
+			else
+			{
+				instances.add(instance);
+			}
 		}
 	}
 

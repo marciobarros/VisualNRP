@@ -79,9 +79,8 @@ public abstract class Command
 		
 		List<String> values = new ArrayList<String>();
 
-		for (int i = index+1; i < parameters.length; i++)
-			if (parameters[i].startsWith("-"))
-				values.add(parameters[i]);
+		for (int i = index+1; i < parameters.length && !parameters[i].startsWith("-"); i++)
+			values.add(parameters[i]);
 		
 		String[] result = new String[values.size()];
 		
@@ -121,9 +120,8 @@ public abstract class Command
 
 		List<String> values = new ArrayList<String>();
 		
-		for (int i = index+1; i < parameters.length; i++)
-			if (parameters[i].startsWith("-"))
-				values.add(parameters[i]);
+		for (int i = index+1; i < parameters.length && !parameters[i].startsWith("-"); i++)
+			values.add(parameters[i]);
 		
 		String[] result = new String[values.size()];
 		

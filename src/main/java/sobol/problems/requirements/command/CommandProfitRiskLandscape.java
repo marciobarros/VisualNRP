@@ -69,8 +69,10 @@ class CommandProfitRiskLandscape extends Command
 				
 				Instance.addInstancesFromCategory(category, instances);
 			}
-			
-			instances.add(instance);
+			else
+			{
+				instances.add(instance);
+			}
 		}
 	}
 

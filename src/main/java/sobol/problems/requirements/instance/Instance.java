@@ -47,7 +47,7 @@ public enum Instance
 	 */
 	public String getFilename()
 	{
-		return "data/requirements/realistic/" + name + ".txt";
+		return category.getDirectory() + "/" + name + ".txt";
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package sobol.problems.requirements.calc;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
@@ -61,6 +62,9 @@ public class RiskLandscapeReport
 	 */
 	private void createLandscape(String filename, Project project, Constructor constructor, int[] budgetFactors, int[] riskImportances, IRiskLanscapeCalculator calculator) throws Exception
 	{
+		File file = new File(filename);
+		file.getParentFile().mkdirs();
+		
 		FileWriter outFile = new FileWriter(filename);
 		PrintWriter out = new PrintWriter(outFile);
 		
