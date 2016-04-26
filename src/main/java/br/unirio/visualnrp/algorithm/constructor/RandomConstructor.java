@@ -1,11 +1,11 @@
-package sobol.problems.requirements.algorithm.constructor;
+package br.unirio.visualnrp.algorithm.constructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.model.Project;
+import sobol.problems.requirements.support.PseudoRandom;
 
 /**
  * Constructor that generates a random solution.

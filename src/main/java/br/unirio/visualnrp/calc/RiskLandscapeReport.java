@@ -1,14 +1,13 @@
-package sobol.problems.requirements.calc;
+package br.unirio.visualnrp.calc;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.constructor.RandomConstructor;
 import sobol.problems.requirements.instance.Instance;
 import sobol.problems.requirements.model.Project;
 import sobol.problems.requirements.reader.RequirementReader;
+import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 
 /**
  * Class that represents the landscape report

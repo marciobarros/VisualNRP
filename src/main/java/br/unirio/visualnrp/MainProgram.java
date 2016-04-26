@@ -1,7 +1,7 @@
-package sobol.problems.requirements;
+package br.unirio.visualnrp;
 
+import br.unirio.visualnrp.calc.ReleaseLandscapeReport;
 import sobol.problems.requirements.calc.Optimizer;
-import sobol.problems.requirements.calc.ReleaseLandscapeReport;
 import sobol.problems.requirements.command.Command;
 import sobol.problems.requirements.command.CommandFactory;
 

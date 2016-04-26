@@ -1,6 +1,6 @@
 package sobol.problems.requirements.model;
 
-import jmetal.util.PseudoRandom;
+import sobol.problems.requirements.support.PseudoRandom;
 
 
 /**

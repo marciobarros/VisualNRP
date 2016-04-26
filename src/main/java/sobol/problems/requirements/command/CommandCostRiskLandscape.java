@@ -3,7 +3,7 @@ package sobol.problems.requirements.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import sobol.problems.requirements.calc.RiskLandscapeReport;
+import br.unirio.visualnrp.calc.RiskLandscapeReport;
 import sobol.problems.requirements.instance.Instance;
 import sobol.problems.requirements.instance.InstanceCategory;
 

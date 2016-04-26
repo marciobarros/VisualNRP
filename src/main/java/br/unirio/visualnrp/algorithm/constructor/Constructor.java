@@ -1,4 +1,4 @@
-package sobol.problems.requirements.algorithm.constructor;
+package br.unirio.visualnrp.algorithm.constructor;
 
 /**
  * This interface represents an algorithm that generates an initial solution for the problem.

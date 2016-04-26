@@ -1,12 +1,11 @@
-package sobol.problems.requirements.algorithm.search;
+package br.unirio.visualnrp.algorithm.search;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-import jmetal.util.PseudoRandom;
-import sobol.problems.requirements.algorithm.constructor.Constructor;
-import sobol.problems.requirements.algorithm.solution.Solution;
 import sobol.problems.requirements.model.Project;
+import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.algorithm.solution.Solution;
 
 /**
  * Iterated Local Search for the next release problem

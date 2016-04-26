@@ -1,4 +1,4 @@
-package sobol.problems.requirements.algorithm.search;
+package br.unirio.visualnrp.algorithm.search;
 
 
 /**

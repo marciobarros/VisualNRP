@@ -1,4 +1,4 @@
-package sobol.problems.requirements.algorithm.solution;
+package br.unirio.visualnrp.algorithm.solution;
 
 import sobol.problems.requirements.model.Project;
 

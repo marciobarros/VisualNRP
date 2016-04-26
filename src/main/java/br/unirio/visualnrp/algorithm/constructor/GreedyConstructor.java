@@ -1,4 +1,4 @@
-package sobol.problems.requirements.algorithm.constructor;
+package br.unirio.visualnrp.algorithm.constructor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jmetal.util.PseudoRandom;
 import sobol.problems.requirements.model.Project;
+import sobol.problems.requirements.support.PseudoRandom;
 
 /**
  * Greedy constructor that uses the relation Profit / Cost for selecting customers

@@ -1,6 +1,6 @@
 package sobol.problems.requirements.command;
 
-import sobol.problems.requirements.calc.ReleaseLandscapeReport;
+import br.unirio.visualnrp.calc.ReleaseLandscapeReport;
 import sobol.problems.requirements.instance.Instance;
 
 /**
