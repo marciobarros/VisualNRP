@@ -29,6 +29,7 @@ public class CommandFactory
 		this.commands.add(new CommandReleasePlanningLandscape());
 		this.commands.add(new CommandCostRiskLandscape());
 		this.commands.add(new CommandProfitRiskLandscape());
+		this.commands.add(new CommandOptimizeProfitRisk());
 	}
 	
 	/**

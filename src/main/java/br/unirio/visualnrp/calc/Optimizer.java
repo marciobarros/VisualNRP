@@ -3,8 +3,6 @@ package br.unirio.visualnrp.calc;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
@@ -13,6 +11,7 @@ import br.unirio.visualnrp.algorithm.search.IteratedLocalSearch;
 import br.unirio.visualnrp.algorithm.search.SearchAlgorithm;
 import br.unirio.visualnrp.algorithm.search.VisIteratedLocalSearch;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.instance.Instance;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
 
@@ -23,14 +22,29 @@ import br.unirio.visualnrp.reader.RequirementReader;
  */
 public class Optimizer
 {
+	/**
+	 * Number of optimization cycles
+	 */
 	private static int CYCLES = 30;
 	
+	/**
+	 * Maximum number of evaluation rounds for the algorithms
+	 */
 	private static int MAXEVALUATIONS = 10000000;
 	
+	/**
+	 * Sample size for the VISILS algorithm
+	 */
 	private static int SAMPLE_SIZE = 10;
-	
+
+	/**
+	 * Available search algorithms
+	 */
 	enum Algorithm { VISILS, ILS, HC }
 
+	/**
+	 * Creates a search algoritm for the problem at hand
+	 */
 	private SearchAlgorithm createAlgorithm(Algorithm type, PrintWriter detailsWriter, Project project, int budget, Constructor constructor) throws Exception
 	{
 		if (type == Algorithm.VISILS)
@@ -44,86 +58,165 @@ public class Optimizer
 		
 		return null;
 	}
-
-	private void runInstance(PrintWriter outWriter, PrintWriter detailsWriter, Algorithm type, Project project, double budgetFactor) throws Exception
+	
+	/**
+	 * Calculates the fitness of a given solution
+	 */
+//	private double evaluate(boolean[] solution, Project project, double availableBudget, int riskImportance, double totalProfit, double totalCost, double totalRisk, IRiskLanscapeCalculator calculator) throws Exception
+//	{
+//		int cost = project.calculateCost(solution);
+//		
+//		if (cost > availableBudget)
+//			return -cost / totalCost;
+//
+//		int profit = project.calculateProfit(solution);
+//		double risk = calculator.calculateRisk(project, solution);
+//
+//		double alfa = riskImportance / 100.0;
+//		return (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;
+//	}
+	
+	/**
+	 * Creates the landscape report for a given instance and budget factor
+	 */
+	private void createReportForBudget(PrintWriter out, Project project, int budgetFactor, int riskImportance, Algorithm algorithm, double totalProfit, double totalCost, double totalRisk, IRiskLanscapeCalculator2 calculator) throws Exception
 	{
+		int budget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
 		Constructor constructor = new GreedyConstructor(project);
-		int budget = (int) (budgetFactor * project.getTotalCost());
 		
-		String name = project.getName();
-		name = name.substring(name.lastIndexOf('/') + 1);
-		name = name.substring(0, name.lastIndexOf('.'));
-		name = name + "-" + ((int)(budgetFactor * 100));
+		String shortName = project.getName();
+		shortName = shortName.substring(shortName.lastIndexOf('/') + 1);
+		shortName = shortName.substring(0, shortName.lastIndexOf('.'));
 
 		double sum = 0.0;
 		double max = 0;
 		
 		for (int i = 0; i < CYCLES; i++)
 		{
-			SearchAlgorithm algorithm = createAlgorithm(type, detailsWriter, project, budget, constructor);
+			SearchAlgorithm searchAlgorithm = createAlgorithm(algorithm, null, project, budget, constructor);
+			boolean[] solution = searchAlgorithm.execute();
+			// TODO como passar a função de fitness certa para o algoritmo ???
 
-			long initTime = System.currentTimeMillis();
-			detailsWriter.println(type.name() + " " + project.getName() + " #" + CYCLES);
-			boolean[] solution = algorithm.execute();
-			detailsWriter.println();
-			long executionTime = (System.currentTimeMillis() - initTime);
-
-			String s = type.name() + "; " + name + "; " + i + "; " + executionTime;
-			s += "; " + algorithm.getFitness() + "; " + algorithm.getIterationBestFound();
-			s += "; " + Solution.printSolution(solution);
-			outWriter.println(s);
+			String s = algorithm.name() + "," + shortName + "," + i + "," + budgetFactor + "," + riskImportance;
+			s += "," + searchAlgorithm.getFitness() + "," + Solution.printSolution(solution);
+			out.println(s);
 			
-			sum += algorithm.getFitness();
-			if (algorithm.getFitness() > max) max = algorithm.getFitness();
+			sum += searchAlgorithm.getFitness();
+			if (searchAlgorithm.getFitness() > max) max = searchAlgorithm.getFitness();
 			System.out.print("*");
 		}
 
-		System.out.println(" " + type.name() + "\t" + name + "\t" + (sum/CYCLES) + "\t" + max);
+		System.out.println(" " + algorithm.name() + "\t" + shortName + "\t" + (sum/CYCLES) + "\t" + max);
 	}
 	
-	private List<Project> loadProjects(String[] filenames)
+	/**
+	 * Creates the optimization report report for a given instance
+	 */
+	private void createReport(PrintWriter out, Project project, int[] budgetFactors, int[] riskImportances, Algorithm[] algorithms, IRiskLanscapeCalculator2 calculator) throws Exception
 	{
-		List<Project> projects = new ArrayList<Project>();
+		double totalProfit = project.getTotalProfit();
+		double totalCost = project.getTotalCost();
+		double totalRisk = calculator.calculateTotalRisk(project);
 		
-		for (String filename : filenames)
+		for (int budgetFactor : budgetFactors)
 		{
-			RequirementReader reader = new RequirementReader(filename);
+			for (int riskImportance : riskImportances)
+			{
+				for (Algorithm algorithm : algorithms)
+				{
+					createReportForBudget(out, project, budgetFactor, riskImportance, algorithm, totalProfit, totalCost, totalRisk, calculator);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Runs the optimization report for a set of instances
+	 */
+	private void execute(Iterable<Instance> instances, int[] budgetFactors, int[] riskImportances, Algorithm[] algorithms, String outputFilename, IRiskLanscapeCalculator2 calculator) throws Exception
+	{
+		File file = new File(outputFilename);
+		file.getParentFile().mkdirs();
+		
+		FileWriter outFile = new FileWriter(outputFilename);
+		PrintWriter out = new PrintWriter(outFile);
+		out.println("alg,instance,cycle,budget,risk,fit,solution");
+
+		for (Instance instance : instances)
+		{
+			RequirementReader reader = new RequirementReader(instance.getFilename());
 			Project project = reader.execute();
-			projects.add(project);
+			System.out.println("Processing " + project.getName() + " ...");
+			createReport(out, project, budgetFactors, riskImportances, algorithms, calculator);
 		}
 		
-		return projects;
-	}
-
-	public Optimizer execute(String[] filenames, double[] budgetFactors) throws Exception
-	{
-		PrintWriter outWriter = new PrintWriter(new FileWriter("saida.txt", true));
-		PrintWriter detailsWriter = new PrintWriter(new FileWriter("saida details.txt", true));
-
-		List<Project> projects = loadProjects(filenames);
-		
-		for (double budgetFactor : budgetFactors)
-			for (Project project : projects)
-				for (Algorithm algorithm : Algorithm.values())
-					runInstance(outWriter, detailsWriter, algorithm, project, budgetFactor);
-		
-		outWriter.close();
-		detailsWriter.close();
-		return this;
+		out.close();
+		outFile.close();
 	}
 	
-	public Optimizer clean()
+	/**
+	 * Runs the optimization report for profit risk
+	 */
+	public void executeProfitRisk(Iterable<Instance> instances, int[] budgetFactors, int[] riskImportances, String outputFilename) throws Exception
 	{
-		File out = new File("saida.txt");
-		
-		if (out.exists())
-			out.delete();
-		
-		File details = new File("saida details.txt");
-		
-		if (details.exists())
-			details.delete();
+		Algorithm[] algorithms = { Algorithm.ILS, Algorithm.VISILS };
+		execute(instances, budgetFactors, riskImportances, algorithms, outputFilename, new ProfitRiskLanscapeCalculator2());
+	}
+	
+	/**
+	 * Runs the optimization report for cost risk
+	 */
+	public void executeCostRisk(Iterable<Instance> instances, int[] budgetFactors, int[] riskImportances, String outputFilename) throws Exception
+	{
+		Algorithm[] algorithms = { Algorithm.ILS, Algorithm.VISILS };
+		execute(instances, budgetFactors, riskImportances, algorithms, outputFilename, new CostRiskLanscapeCalculator2());
+	}
+}
 
-		return this;
+/**
+ * Interface for the calculation of fitness landscapes
+ * 
+ * @author marciobarros
+ */
+interface IRiskLanscapeCalculator2
+{
+	double calculateTotalRisk(Project project);
+
+	double calculateRisk(Project project, boolean[] solution);
+}
+
+/**
+ * Class that supports the calculation of the fitness landscape for profit risk
+ * 
+ * @author marciobarros
+ */
+class ProfitRiskLanscapeCalculator2 implements IRiskLanscapeCalculator2
+{
+	public double calculateTotalRisk(Project project)
+	{
+		return project.getTotalCustomerRisk();
+	}
+
+	public double calculateRisk(Project project, boolean[] solution)
+	{
+		return project.calculateCustomerRisk(solution);
+	}
+}
+
+/**
+ * Class that supports the calculation of the fitness landscape for cost risk
+ * 
+ * @author marciobarros
+ */
+class CostRiskLanscapeCalculator2 implements IRiskLanscapeCalculator2
+{
+	public double calculateTotalRisk(Project project)
+	{
+		return project.getTotalRequirementRisk();	
+	}
+
+	public double calculateRisk(Project project, boolean[] solution)
+	{
+		return project.calculateRequirementRisk(solution);
 	}
 }
