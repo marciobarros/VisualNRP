@@ -1,18 +1,18 @@
-package sobol.problems.requirements.command;
+package br.unirio.visualnrp.command;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import br.unirio.visualnrp.calc.RiskLandscapeReport;
-import sobol.problems.requirements.instance.Instance;
-import sobol.problems.requirements.instance.InstanceCategory;
+import br.unirio.visualnrp.instance.Instance;
+import br.unirio.visualnrp.instance.InstanceCategory;
 
 /**
- * Class that represents the command that generates the cost risk landscape report
+ * Class that represents the command that generates the profit risk landscape report
  * 
  * @author Marcio
  */
-class CommandCostRiskLandscape extends Command
+class CommandProfitRiskLandscape extends Command
 {
 	private List<Instance> instances;
 	private int[] budgets;
@@ -22,9 +22,9 @@ class CommandCostRiskLandscape extends Command
 	/**
 	 * Initializes the command
 	 */
-	public CommandCostRiskLandscape()
+	public CommandProfitRiskLandscape()
 	{
-		super("LCRR", "Landscape report for the cost risk problem");
+		super("LPRR", "Landscape report for the profit risk problem");
 		
 		this.instances = new ArrayList<Instance>();
 		this.budgets = null;
@@ -106,7 +106,7 @@ class CommandCostRiskLandscape extends Command
 	@Override
 	public boolean run() throws Exception
 	{
-		new RiskLandscapeReport().executeCostRisk(instances, budgets, riskLevels, outputFilename);
+		new RiskLandscapeReport().executeProfitRisk(instances, budgets, riskLevels, outputFilename);
 		return false;
 	}
 
@@ -116,6 +116,6 @@ class CommandCostRiskLandscape extends Command
 	@Override
 	public Command clone()
 	{
-		return new CommandCostRiskLandscape();
+		return new CommandProfitRiskLandscape();
 	}
 }

@@ -3,12 +3,13 @@ package br.unirio.visualnrp.calc;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
-import sobol.problems.requirements.instance.Instance;
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.reader.RequirementReader;
+import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.search.VisIteratedLocalSearch;
+import br.unirio.visualnrp.instance.Instance;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
  * Class that represents the landscape report

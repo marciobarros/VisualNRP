@@ -1,7 +1,7 @@
-package sobol.problems.requirements.command;
+package br.unirio.visualnrp.command;
 
 import br.unirio.visualnrp.calc.ReleaseLandscapeReport;
-import sobol.problems.requirements.instance.Instance;
+import br.unirio.visualnrp.instance.Instance;
 
 /**
  * Class that represents the command that generates the release-planning report

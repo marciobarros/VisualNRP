@@ -1,6 +1,6 @@
-package sobol.problems.requirements.model;
+package br.unirio.visualnrp.model;
 
-import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.support.PseudoRandom;
 
 
 /**

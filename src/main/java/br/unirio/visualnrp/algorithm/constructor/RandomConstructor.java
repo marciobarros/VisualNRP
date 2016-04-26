@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.support.PseudoRandom;
 
 /**
  * Constructor that generates a random solution.

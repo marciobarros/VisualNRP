@@ -1,4 +1,4 @@
-package sobol.problems.requirements.support;
+package br.unirio.visualnrp.support;
 
 import java.util.Random;
 

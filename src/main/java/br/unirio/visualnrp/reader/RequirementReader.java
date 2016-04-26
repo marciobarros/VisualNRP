@@ -1,11 +1,12 @@
-package sobol.problems.requirements.reader;
+package br.unirio.visualnrp.reader;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import sobol.problems.requirements.model.Project;
+
+import br.unirio.visualnrp.model.Project;
 
 /**
  * Class that reads data from a requirements file

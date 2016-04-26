@@ -1,6 +1,6 @@
 package br.unirio.visualnrp.algorithm.solution;
 
-import sobol.problems.requirements.model.Project;
+import br.unirio.visualnrp.model.Project;
 
 public class ConsistencyPrecedences
 {

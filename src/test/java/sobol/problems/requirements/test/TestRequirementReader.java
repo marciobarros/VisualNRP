@@ -1,8 +1,8 @@
 package sobol.problems.requirements.test;
 
 import junit.framework.TestCase;
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.reader.RequirementReader;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.reader.RequirementReader;
 
 public class TestRequirementReader extends TestCase
 {

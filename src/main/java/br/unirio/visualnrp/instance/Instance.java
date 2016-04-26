@@ -1,4 +1,4 @@
-package sobol.problems.requirements.instance;
+package br.unirio.visualnrp.instance;
 
 import java.util.List;
 

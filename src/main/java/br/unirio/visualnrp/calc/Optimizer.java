@@ -6,14 +6,15 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.reader.RequirementReader;
+import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
 import br.unirio.visualnrp.algorithm.search.HillClimbing;
 import br.unirio.visualnrp.algorithm.search.IteratedLocalSearch;
 import br.unirio.visualnrp.algorithm.search.SearchAlgorithm;
 import br.unirio.visualnrp.algorithm.search.VisIteratedLocalSearch;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
  * Classe responsável pela otimização

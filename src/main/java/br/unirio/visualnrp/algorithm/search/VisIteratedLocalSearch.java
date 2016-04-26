@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.support.PseudoRandom;
 
 public class VisIteratedLocalSearch implements SearchAlgorithm
 {

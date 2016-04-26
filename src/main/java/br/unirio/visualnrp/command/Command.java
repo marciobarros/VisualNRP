@@ -1,4 +1,4 @@
-package sobol.problems.requirements.command;
+package br.unirio.visualnrp.command;
 
 import java.util.ArrayList;
 import java.util.List;

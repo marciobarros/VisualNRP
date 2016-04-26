@@ -3,9 +3,10 @@ package br.unirio.visualnrp.algorithm.search;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.support.PseudoRandom;
 
 /**
  * Iterated Local Search for the next release problem

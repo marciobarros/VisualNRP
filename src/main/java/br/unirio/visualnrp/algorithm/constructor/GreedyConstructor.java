@@ -6,8 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import sobol.problems.requirements.model.Project;
-import sobol.problems.requirements.support.PseudoRandom;
+import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.support.PseudoRandom;
 
 /**
  * Greedy constructor that uses the relation Profit / Cost for selecting customers
