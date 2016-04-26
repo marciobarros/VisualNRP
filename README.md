@@ -7,3 +7,5 @@ More information in:
 <i>Fuchshuber, R. and Barros. M.
 Improving Heuristics for the Next Release Problem through Landscape Visualization
 Search-Based Software Engineering, 222-227 (2014)</i>
+
+FIXED RANDOM SEED: 253958446296927

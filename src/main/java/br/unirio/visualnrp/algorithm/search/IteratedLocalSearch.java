@@ -3,8 +3,11 @@ package br.unirio.visualnrp.algorithm.search;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
+import javax.management.RuntimeErrorException;
+
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -82,6 +85,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 		this.tmpSolution = new Solution(project);
 		this.constructor = constructor;
 		createRandomSelectionOrder(project);
+		checkSelectionOrder(project);
 	}
 
 	/**
@@ -109,6 +113,14 @@ public class IteratedLocalSearch implements SearchAlgorithm
 				temporaryOrder[j] = temporaryOrder[j + 1];
 			}
 		}
+	}
+
+	/**
+	 * Checks whether the selection order is consistent
+	 */
+	private void checkSelectionOrder(Project project) 
+	{
+		int customerCount = project.getCustomerCount();
 
 		for (int i = 0; i < customerCount; i++)
 		{
@@ -124,7 +136,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 
 			if (!achou)
 			{
-				System.out.println("ERRO DE GERACAO DE INICIO ALEATORIO");
+				throw new RuntimeErrorException(null, "ERRO DE GERACAO DE INICIO ALEATORIO");
 			}
 		}
 	}
@@ -164,23 +176,22 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
-	private double evaluate(Solution solution)
+	private double evaluate(Solution solution, IFitnessCalculator calculator)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
 		{
 			detailsFile.println(evaluations + "; " + currentFitness);
 		}
 
-		int cost = solution.getCost();
-		return (cost <= availableBudget) ? solution.getProfit() : -cost;
+		return calculator.evaluate(solution, availableBudget, 0);
 	}
 
 	/**
 	 * Runs a neighborhood visit starting from a given solution
 	 */
-	private NeighborhoodVisitorResult visitNeighbors(Solution solution)
+	private NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator)
 	{
-		double startingFitness = evaluate(solution);
+		double startingFitness = evaluate(solution, calculator);
 
 		if (evaluations > maxEvaluations)
 		{
@@ -199,7 +210,7 @@ public class IteratedLocalSearch implements SearchAlgorithm
 			int customerI = selectionOrder[i];
 
 			solution.flipCustomer(customerI);
-			double neighborFitness = evaluate(solution);
+			double neighborFitness = evaluate(solution, calculator);
 
 			if (evaluations > maxEvaluations)
 			{
@@ -220,14 +231,14 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Performs the local search starting from a given solution
 	 */
-	private boolean localSearch(boolean[] solution)
+	private boolean localSearch(boolean[] solution, IFitnessCalculator calculator)
 	{
 		NeighborhoodVisitorResult result;
 		tmpSolution.setAllCustomers(solution);
 
 		do
 		{
-			result = visitNeighbors(tmpSolution);
+			result = visitNeighbors(tmpSolution, calculator);
 
 			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
 			{
@@ -244,24 +255,24 @@ public class IteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Main loop of the algorithm
 	 */
-	public boolean[] execute() throws Exception
+	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
 		int customerCount = project.getCustomerCount();
 
 		this.currentSolution = constructor.generateSolution();
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs);
+		this.currentFitness = evaluate(hcrs, calculator);
 
 		boolean[] bestSol = new boolean[customerCount];
-		localSearch(currentSolution);
+		localSearch(currentSolution, calculator);
 		Solution.copySolution(currentSolution, bestSol);
 		double bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
 		{
 			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
-			localSearch(perturbedSolution);
+			localSearch(perturbedSolution, calculator);
 
 			if (shouldAccept(currentFitness, bestFitness))
 			{

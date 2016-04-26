@@ -42,6 +42,9 @@ public class ReleaseLandscapeReport
 		
 		// TODO tirar prefixo sobol dos pacotes
 		
+		// TODO rever isto
+		IFitnessCalculator calculator = new ProfitFitnessCalculator();
+		
 		RequirementReader reader = new RequirementReader(instance.getFilename());
 		Project project = reader.execute();
 		System.out.println("Source: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
@@ -49,7 +52,7 @@ public class ReleaseLandscapeReport
 		Constructor constructor = new GreedyConstructor(project);
 		int budget = (int) (0.3 * project.getTotalCost());
 		VisIteratedLocalSearch visils = new VisIteratedLocalSearch(null, project, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
-		boolean[] firstSolution = visils.execute();
+		boolean[] firstSolution = visils.execute(calculator);
 		
 		Project secondProject = createProjectRemovingSolution(project, firstSolution);
 		System.out.println("Solution: profit=" + project.calculateProfit(firstSolution) + "; cost=" + project.calculateCost(firstSolution));
@@ -57,7 +60,7 @@ public class ReleaseLandscapeReport
 
 		Constructor constructor2 = new GreedyConstructor(secondProject);
 		visils = new VisIteratedLocalSearch(null, secondProject, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor2);
-		boolean[] secondSolution = visils.execute();
+		boolean[] secondSolution = visils.execute(calculator);
 
 		Project thirdProject = createProjectRemovingSolution(secondProject, secondSolution);
 		System.out.println("Solution: profit=" + secondProject.calculateProfit(secondSolution) + "; cost=" + secondProject.calculateCost(secondSolution));

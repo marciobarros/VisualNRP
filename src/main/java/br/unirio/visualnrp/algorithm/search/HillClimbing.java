@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -196,23 +197,22 @@ public class HillClimbing implements SearchAlgorithm
 	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
-	protected double evaluate(Solution solution)
+	protected double evaluate(Solution solution, IFitnessCalculator calculator)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
 		{
 			detailsFile.println(evaluations + "; " + fitness);
 		}
 
-		int cost = solution.getCost();
-		return (cost <= availableBudget) ? solution.getProfit() : -cost;
+		return calculator.evaluate(solution, availableBudget, 0);
 	}
 
 	/**
 	 * Runs a neighborhood visit starting from a given solution
 	 */
-	protected NeighborhoodVisitorResult visitNeighbors(Solution solution)
+	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator)
 	{
-		double startingFitness = evaluate(solution);
+		double startingFitness = evaluate(solution, calculator);
 
 		if (evaluations > maxEvaluations)
 		{
@@ -231,7 +231,7 @@ public class HillClimbing implements SearchAlgorithm
 			int customerI = selectionOrder[i];
 
 			solution.flipCustomer(customerI);
-			double neighborFitness = evaluate(solution);
+			double neighborFitness = evaluate(solution, calculator);
 
 			if (evaluations > maxEvaluations)
 			{
@@ -252,14 +252,14 @@ public class HillClimbing implements SearchAlgorithm
 	/**
 	 * Performs the local search starting from a given solution
 	 */
-	protected boolean localSearch(boolean[] solution)
+	protected boolean localSearch(boolean[] solution, IFitnessCalculator calculator)
 	{
 		NeighborhoodVisitorResult result;
 		tmpSolution.setAllCustomers(solution);
 
 		do
 		{
-			result = visitNeighbors(tmpSolution);
+			result = visitNeighbors(tmpSolution, calculator);
 
 			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > fitness)
 			{
@@ -276,18 +276,18 @@ public class HillClimbing implements SearchAlgorithm
 	/**
 	 * Executes the Hill Climbing search with random restarts
 	 */
-	public boolean[] execute() throws Exception
+	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
 		this.bestSolution = constructor.generateSolution();
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(bestSolution);
-		this.fitness = evaluate(hcrs);
+		this.fitness = evaluate(hcrs, calculator);
 
 		int customerCount = project.getCustomerCount();
 		boolean[] solution = new boolean[customerCount];
 		Solution.copySolution(hcrs.getSolution(), solution);
 
-		while (localSearch(solution))
+		while (localSearch(solution, calculator))
 		{
 			this.randomRestartCount++;
 			solution = constructor.generateSolution();

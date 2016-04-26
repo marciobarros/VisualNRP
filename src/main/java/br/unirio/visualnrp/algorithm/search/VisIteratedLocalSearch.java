@@ -8,6 +8,7 @@ import java.util.List;
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -134,12 +135,12 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		}
 	}
 
-	public boolean[] execute() throws Exception
+	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
 		int customerCount = project.getCustomerCount();
 		bestSol = new boolean[customerCount];
 
-		this.minCustomers = executeRandomSampling(numberSamplingIter, project);
+		this.minCustomers = executeRandomSampling(numberSamplingIter, project, calculator);
 		this.maxCustomers = customerCount;
 
 		//sthis.currentSolution = new boolean[customerCount];
@@ -148,16 +149,16 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		
 		Solution hcrs = new Solution(project);
 		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs);
+		this.currentFitness = evaluate(hcrs, calculator);
 
-		localSearch(currentSolution);
+		localSearch(currentSolution, calculator);
 		Solution.copySolution(currentSolution, bestSol);
 		bestFitness = this.currentFitness;
 
 		while (evaluations < maxEvaluations)
 		{
 			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
-			localSearch(perturbedSolution);
+			localSearch(perturbedSolution, calculator);
 
 			if (shouldAccept(currentFitness, bestFitness))
 			{
@@ -172,28 +173,27 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
-	private double evaluate(Solution solution)
+	private double evaluate(Solution solution, IFitnessCalculator calculator)
 	{
 		if (++evaluations % 10000 == 0 && detailsFile != null)
 		{
 			detailsFile.println(evaluations + "; " + currentFitness);
 		}
 
-		int cost = solution.getCost();
-		return (cost <= availableBudget) ? solution.getProfit() : -cost;
+		return calculator.evaluate(solution, availableBudget, 0);
 	}
 
 	/**
 	 * Performs the local search starting from a given solution
 	 */
-	private boolean localSearch(boolean[] solution)
+	private boolean localSearch(boolean[] solution, IFitnessCalculator calculator)
 	{
 		NeighborhoodVisitorResult result;
 		tmpSolution.setAllCustomers(solution);
 
 		do
 		{
-			result = visitNeighbors(tmpSolution);
+			result = visitNeighbors(tmpSolution, calculator);
 
 			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
 			{
@@ -261,7 +261,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		return newSolution;
 	}
 
-	private int executeRandomSampling(int numberSamplingIter, Project project)
+	private int executeRandomSampling(int numberSamplingIter, Project project, IFitnessCalculator calculator)
 	{
 		int numberOfCustomersBest = 0;
 		Solution hcrs = new Solution(project);
@@ -273,7 +273,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 			{
 				boolean[] solution = sampConstructor.generateSolutionWith(numElemens);
 				hcrs.setAllCustomers(solution);
-				double solFitness = evaluate(hcrs);
+				double solFitness = evaluate(hcrs, calculator);
 
 				if (solFitness > this.bestFitness)
 				{
@@ -288,9 +288,9 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 		return numberOfCustomersBest;
 	}
 
-	private NeighborhoodVisitorResult visitNeighbors(Solution solution)
+	private NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator)
 	{
-		double startingFitness = evaluate(solution);
+		double startingFitness = evaluate(solution, calculator);
 
 		if (evaluations > maxEvaluations)
 		{
@@ -315,7 +315,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 			if (numberOfCustomers >= minCustomers && numberOfCustomers <= maxCustomers)
 			{
 				solution.flipCustomer(customerI);
-				double neighborFitness = evaluate(solution);
+				double neighborFitness = evaluate(solution, calculator);
 
 				if (evaluations > maxEvaluations)
 				{

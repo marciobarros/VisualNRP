@@ -1,5 +1,7 @@
 package br.unirio.visualnrp.algorithm.search;
 
+import br.unirio.visualnrp.calc.IFitnessCalculator;
+
 /**
  * Abstract class that represents a search algorithm
  * 
@@ -10,7 +12,7 @@ public interface SearchAlgorithm
 	/**
 	 * Executes the algorithm
 	 */
-	boolean[] execute() throws Exception;
+	boolean[] execute(IFitnessCalculator calculator) throws Exception;
 
 	/**
 	 * Returns the fitness of the best solution
