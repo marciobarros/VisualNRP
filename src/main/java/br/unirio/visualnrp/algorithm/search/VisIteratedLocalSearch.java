@@ -75,10 +75,12 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 	private int minCustomers;
 	private int maxCustomers;
 	private final int numberSamplingIter;
+	private int riskImportance;
 
-	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
+	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
 	{
 		this.project = project;
+		this.riskImportance = riskImportance;
 		this.availableBudget = budget;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
@@ -180,7 +182,7 @@ public class VisIteratedLocalSearch implements SearchAlgorithm
 			detailsFile.println(evaluations + "; " + currentFitness);
 		}
 
-		return calculator.evaluate(solution, availableBudget, 0);
+		return calculator.evaluate(solution, availableBudget, riskImportance);
 	}
 
 	/**

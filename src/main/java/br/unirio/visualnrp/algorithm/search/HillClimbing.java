@@ -79,14 +79,17 @@ public class HillClimbing implements SearchAlgorithm
 	 * A constructor algorithm for initial solutions generation.
 	 */
 	protected Constructor constructor;
+	
+	private int riskImportance;
 
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	public HillClimbing(PrintWriter detailsFile, Project project, int budget, int maxEvaluations, Constructor constructor) throws Exception
+	public HillClimbing(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
 	{
 		this.project = project;
 		this.availableBudget = budget;
+		this.riskImportance = riskImportance;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
 		this.evaluations = 0;
@@ -204,7 +207,7 @@ public class HillClimbing implements SearchAlgorithm
 			detailsFile.println(evaluations + "; " + fitness);
 		}
 
-		return calculator.evaluate(solution, availableBudget, 0);
+		return calculator.evaluate(solution, availableBudget, riskImportance);
 	}
 
 	/**

@@ -45,16 +45,16 @@ public class Optimizer
 	/**
 	 * Creates a search algoritm for the problem at hand
 	 */
-	private SearchAlgorithm createAlgorithm(Algorithm type, PrintWriter detailsWriter, Project project, int budget, Constructor constructor) throws Exception
+	private SearchAlgorithm createAlgorithm(Algorithm type, PrintWriter detailsWriter, Project project, int budget, int riskImportance, Constructor constructor) throws Exception
 	{
 		if (type == Algorithm.VISILS)
-			return new VisIteratedLocalSearch(detailsWriter, project, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
+			return new VisIteratedLocalSearch(detailsWriter, project, budget, riskImportance, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
 		
 		if (type == Algorithm.ILS)
-			return new IteratedLocalSearch(detailsWriter, project, budget, MAXEVALUATIONS, constructor);
+			return new IteratedLocalSearch(detailsWriter, project, budget, riskImportance, MAXEVALUATIONS, constructor);
 
 		if (type == Algorithm.HC)
-			return new HillClimbing(detailsWriter, project, budget, MAXEVALUATIONS, constructor);
+			return new HillClimbing(detailsWriter, project, budget, riskImportance, MAXEVALUATIONS, constructor);
 		
 		return null;
 	}
@@ -77,9 +77,8 @@ public class Optimizer
 		
 		for (int i = 0; i < CYCLES; i++)
 		{
-			SearchAlgorithm searchAlgorithm = createAlgorithm(algorithm, null, project, budget, constructor);
+			SearchAlgorithm searchAlgorithm = createAlgorithm(algorithm, null, project, budget, riskImportance, constructor);
 			boolean[] solution = searchAlgorithm.execute(calculator);
-			// TODO como passar a função de fitness certa para o algoritmo ???
 
 			String s = algorithm.name() + "," + shortName + "," + i + "," + budgetFactor + "," + riskImportance;
 			s += "," + searchAlgorithm.getFitness() + "," + Solution.printSolution(solution);

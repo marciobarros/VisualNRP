@@ -51,7 +51,7 @@ public class ReleaseLandscapeReport
 
 		Constructor constructor = new GreedyConstructor(project);
 		int budget = (int) (0.3 * project.getTotalCost());
-		VisIteratedLocalSearch visils = new VisIteratedLocalSearch(null, project, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
+		VisIteratedLocalSearch visils = new VisIteratedLocalSearch(null, project, budget, 0, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
 		boolean[] firstSolution = visils.execute(calculator);
 		
 		Project secondProject = createProjectRemovingSolution(project, firstSolution);
@@ -59,7 +59,7 @@ public class ReleaseLandscapeReport
 		System.out.println("Target: profit=" + secondProject.getTotalProfit() + "; cost=" + secondProject.getTotalCost());
 
 		Constructor constructor2 = new GreedyConstructor(secondProject);
-		visils = new VisIteratedLocalSearch(null, secondProject, budget, MAXEVALUATIONS, SAMPLE_SIZE, constructor2);
+		visils = new VisIteratedLocalSearch(null, secondProject, budget, 0, MAXEVALUATIONS, SAMPLE_SIZE, constructor2);
 		boolean[] secondSolution = visils.execute(calculator);
 
 		Project thirdProject = createProjectRemovingSolution(secondProject, secondSolution);
