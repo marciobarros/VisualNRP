@@ -1,4 +1,4 @@
-package br.unirio.visualnrp.instance;
+package br.unirio.visualnrp.model;
 
 import java.util.List;
 

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.unirio.visualnrp.calc.Optimizer;
-import br.unirio.visualnrp.instance.Instance;
-import br.unirio.visualnrp.instance.InstanceCategory;
+import br.unirio.visualnrp.model.Instance;
+import br.unirio.visualnrp.model.InstanceCategory;
 
 public class CommandOptimizeProfitRisk extends Command
 {

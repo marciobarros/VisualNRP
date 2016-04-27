@@ -11,7 +11,7 @@ import br.unirio.visualnrp.algorithm.search.IteratedLocalSearch;
 import br.unirio.visualnrp.algorithm.search.SearchAlgorithm;
 import br.unirio.visualnrp.algorithm.search.Solution;
 import br.unirio.visualnrp.algorithm.search.VisIteratedLocalSearch;
-import br.unirio.visualnrp.instance.Instance;
+import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
 
