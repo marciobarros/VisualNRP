@@ -11,11 +11,12 @@ import br.unirio.visualnrp.support.PseudoRandom;
 public class Project
 {
 	private static int LOWER_RISK = 10;
-	private static int UPPER_RISK = 15;
+	private static int UPPER_RISK = 25;
 	
 	private String name;
 	private int[] requirementCosts;
 	private double[] requirementCostRisks;
+	private double[] requirementWorstCost;
 	private int[][] requirementDependencySources;
 	private int[] customerProfits;
 	private double[] customerProfitRisks;
@@ -28,11 +29,12 @@ public class Project
 	{
 		this.name = name;
 		this.requirementCosts = null;
+		this.requirementCostRisks = null;
+		this.requirementWorstCost = null;
 		this.requirementDependencySources = null;
 		this.customerProfits = null;
 		this.customerRequirements = null;
 		this.customerProfitRisks = null;
-		this.requirementCostRisks = null;
 	}
 	
 	/**
@@ -88,25 +90,29 @@ public class Project
 		if (requirementCosts == null)
 		{
 			requirementCosts = new int[count];
-			requirementDependencySources = new int[count][];
 			requirementCostRisks = new double[count];
+			requirementWorstCost = new double[count];
+			requirementDependencySources = new int[count][];
 			return;
 		}
 		
 		int[] newCosts = new int[requirementCosts.length + count];
-		int[][] newDependencySources = new int[requirementCosts.length + count][];
 		double[] newRequirementRisk = new double[requirementCostRisks.length + count];
+		double[] newRequirementWorstCost = new double[requirementWorstCost.length + count];
+		int[][] newDependencySources = new int[requirementCosts.length + count][];
 		
 		for (int i = 0; i < requirementCosts.length; i++)
 		{
 			newCosts[i] = requirementCosts[i];
-			newDependencySources[i] = requirementDependencySources[i];
 			newRequirementRisk[i] = requirementCostRisks[i];
+			newRequirementWorstCost[i] = requirementWorstCost[i];
+			newDependencySources[i] = requirementDependencySources[i];
 		}
 		
 		this.requirementCosts = newCosts;
-		this.requirementDependencySources = newDependencySources;
 		this.requirementCostRisks = newRequirementRisk;
+		this.requirementWorstCost = newRequirementWorstCost;
+		this.requirementDependencySources = newDependencySources;
 	}
 
 	/**
@@ -118,7 +124,15 @@ public class Project
 	}
 
 	/**
-	 * Returns the cost of a given requirement
+	 * Returns the worst-case cost of a given requirement
+	 */
+	public double getRequirementWorstCost(int requirement)
+	{
+		return requirementWorstCost[requirement];
+	}
+
+	/**
+	 * Returns the cost-related risk of a given requirement
 	 */
 	public double getRequirementCostRisk(int requirement)
 	{
@@ -132,12 +146,13 @@ public class Project
 	{
 		requirementCosts[requirement] = cost;
 
-		int upperEstimation = PseudoRandom.randInt(0, UPPER_RISK);
+		int upperEstimation = PseudoRandom.randInt(LOWER_RISK, UPPER_RISK);
 		double maxCost = cost * (1.0 + upperEstimation / 100.0); 
 
 		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);
 		double minCost = cost * (1.0 - lowerEstimation / 100.0); 
 
+		this.requirementWorstCost[requirement] = maxCost;
 		this.requirementCostRisks[requirement] = (maxCost - minCost) / 6.0; 
 	}
 	
@@ -276,7 +291,7 @@ public class Project
 	{
 		this.customerProfits[customer] = profit;
 
-		int upperEstimation = PseudoRandom.randInt(0, UPPER_RISK);
+		int upperEstimation = PseudoRandom.randInt(LOWER_RISK, UPPER_RISK);
 		double customerMaxProfit = profit * (1.0 + upperEstimation / 100.0); 
 
 		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);

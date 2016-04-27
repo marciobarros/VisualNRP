@@ -17,6 +17,7 @@ public class Solution
 	private int profit;
 	private double profitRisk;
 	private double costRisk;
+	private double worstCost;
 	
 	/**
 	 * Initializes the solution, given a project
@@ -38,6 +39,7 @@ public class Solution
 		this.profit = 0;
 		this.profitRisk = 0.0;
 		this.costRisk = 0.0;
+		this.worstCost = 0.0;
 	}
 	
 	/**
@@ -200,6 +202,14 @@ public class Solution
 	}
 	
 	/**
+	 * Returns the worst-case cost of the current solution
+	 */
+	public double getWorstCost()
+	{
+		return worstCost;
+	}
+	
+	/**
 	 * Sets the presence of all customers in the solution
 	 */
 	public void setAllCustomers(boolean[] newSelection)
@@ -216,6 +226,7 @@ public class Solution
 		
 		this.cost = 0;
 		this.costRisk = 0.0;
+		this.worstCost = 0.0;
 		
 		for (int i = 0; i < customerCount; i++)
 			if (currentCustomerSelection[i])
@@ -266,6 +277,7 @@ public class Solution
 			{
 				cost += project.getRequirementCost(requirementIndex);
 				costRisk += project.getRequirementCostRisk(requirementIndex);
+				worstCost += project.getRequirementWorstCost(requirementIndex);
 			}
 			
 			currentRequirementSelection[requirementIndex]++;
@@ -287,6 +299,7 @@ public class Solution
 			{
 				cost -= project.getRequirementCost(requirementIndex);
 				costRisk -= project.getRequirementCostRisk(requirementIndex);
+				worstCost -= project.getRequirementWorstCost(requirementIndex);
 			}
 		}
 	}

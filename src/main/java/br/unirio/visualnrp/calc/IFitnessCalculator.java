@@ -59,8 +59,8 @@ class ProfitRiskFitnessCalculator implements IFitnessCalculator
 		if (cost > availableBudget)
 			return -cost / totalCost;
 
-		int profit = solution.getProfit();
 		double risk = solution.getProfitRisk();
+		int profit = solution.getProfit();
 
 		double alfa = riskImportance / 100.0;
 		return (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;
@@ -87,6 +87,22 @@ class CostRiskFitnessCalculator implements IFitnessCalculator
 	
 	public double evaluate(Solution solution, double availableBudget, double riskImportance)
 	{
+//		int cost = solution.getCost();
+//		
+//		if (cost > availableBudget)
+//			return -cost;
+//
+//		// begin new
+//		double worstCost = solution.getWorstCost();
+//		double alfa = riskImportance / 100.0;
+//		double ratio = (worstCost - cost) / cost;
+//
+//		if (ratio > alfa)
+//			return -cost;
+//		
+//		return solution.getProfit();
+//		// end new
+		
 		int cost = solution.getCost();
 		
 		if (cost > availableBudget)

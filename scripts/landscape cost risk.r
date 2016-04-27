@@ -1,3 +1,5 @@
+# COMMAND: LCRR -i classic -b 30 -r 10 25 40 -o results/landscape/cost-risk/%s.txt
+
 #
 # PLOTS AN INSTANCE
 #
@@ -5,15 +7,16 @@ plotInstance <- function(basedir, name) {
 
 	datafile <- paste(basedir, "results/landscape/cost-risk/", name, ".txt", sep="")
 	data <- read.table(datafile, sep=",", header=TRUE)
+	data <- subset(data, data$fit >= 0)
 
-	data30 <- subset(data, data$budget == 30 & data$risk == 20)
-	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Risk 20%", sep=""))
+	data10 <- subset(data, data$budget == 30 & data$risk == 10)
+	boxplot(data10$fit~data10$cust, main=paste(name, "-30 / Risk 10%", sep=""))
 	
-	data50 <- subset(data, data$budget == 30 & data$risk == 50)
-	boxplot(data50$fit~data50$cust, main=paste(name, "-30 / Risk 50%", sep=""))
+	data25 <- subset(data, data$budget == 30 & data$risk == 25)
+	boxplot(data25$fit~data25$cust, main=paste(name, "-30 / Risk 25%", sep=""))
 	
-	data70 <- subset(data, data$budget == 30 & data$risk == 80)
-	boxplot(data70$fit~data70$cust, main=paste(name, "-30 / Risk 80%", sep=""))
+	data40 <- subset(data, data$budget == 30 & data$risk == 40)
+	boxplot(data40$fit~data40$cust, main=paste(name, "-30 / Risk 40%", sep=""))
 }
 
 #
