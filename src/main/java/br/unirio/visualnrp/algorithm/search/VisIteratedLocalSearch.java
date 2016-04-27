@@ -7,7 +7,6 @@ import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
-import br.unirio.visualnrp.algorithm.solution.Solution;
 import br.unirio.visualnrp.calc.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;

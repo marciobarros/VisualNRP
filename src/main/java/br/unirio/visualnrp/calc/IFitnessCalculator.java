@@ -1,6 +1,6 @@
 package br.unirio.visualnrp.calc;
 
-import br.unirio.visualnrp.algorithm.solution.Solution;
+import br.unirio.visualnrp.algorithm.search.Solution;
 import br.unirio.visualnrp.model.Project;
 
 
@@ -41,17 +41,15 @@ class ProfitFitnessCalculator implements IFitnessCalculator
  */
 class ProfitRiskFitnessCalculator implements IFitnessCalculator
 {
-	private Project project;
 	private double totalCost;
 	private double totalProfit;
 	private double totalRisk;
 	
 	public void prepare(Project project)
 	{
-		this.project = project;
 		this.totalCost = project.getTotalCost();
 		this.totalProfit = project.getTotalProfit();
-		this.totalCost = project.getTotalCustomerRisk();
+		this.totalRisk = project.getTotalProfitRisk();
 	}
 	
 	public double evaluate(Solution solution, double availableBudget, double riskImportance)
@@ -62,7 +60,7 @@ class ProfitRiskFitnessCalculator implements IFitnessCalculator
 			return -cost / totalCost;
 
 		int profit = solution.getProfit();
-		double risk = project.calculateCustomerRisk(solution.getSolution());
+		double risk = solution.getProfitRisk();
 
 		double alfa = riskImportance / 100.0;
 		return (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;
@@ -76,17 +74,15 @@ class ProfitRiskFitnessCalculator implements IFitnessCalculator
  */
 class CostRiskFitnessCalculator implements IFitnessCalculator
 {
-	private Project project;
 	private double totalCost;
 	private double totalProfit;
 	private double totalRisk;
 	
 	public void prepare(Project project)
 	{
-		this.project = project;
 		this.totalCost = project.getTotalCost();
 		this.totalProfit = project.getTotalProfit();
-		this.totalCost = project.getTotalRequirementRisk();
+		this.totalRisk = project.getTotalCostRisk();
 	}
 	
 	public double evaluate(Solution solution, double availableBudget, double riskImportance)
@@ -97,7 +93,7 @@ class CostRiskFitnessCalculator implements IFitnessCalculator
 			return -cost / totalCost;
 
 		int profit = solution.getProfit();
-		double risk = project.calculateRequirementRisk(solution.getSolution());
+		double risk = solution.getCostRisk();
 
 		double alfa = riskImportance / 100.0;
 		return (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;

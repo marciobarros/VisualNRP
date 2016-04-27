@@ -15,11 +15,11 @@ public class Project
 	
 	private String name;
 	private int[] requirementCosts;
+	private double[] requirementCostRisks;
 	private int[][] requirementDependencySources;
 	private int[] customerProfits;
+	private double[] customerProfitRisks;
 	private int[][] customerRequirements;
-	private double[] customerRisk;
-	private double[] requirementRisk;
 	
 	/**
 	 * Creates a project, given its name
@@ -31,8 +31,8 @@ public class Project
 		this.requirementDependencySources = null;
 		this.customerProfits = null;
 		this.customerRequirements = null;
-		this.customerRisk = null;
-		this.requirementRisk = null;
+		this.customerProfitRisks = null;
+		this.requirementCostRisks = null;
 	}
 	
 	/**
@@ -66,6 +66,19 @@ public class Project
 		
 		return sum;
 	}
+	
+	/**
+	 * Returns the total requirement related risk attained by the set of requirements
+	 */
+	public double getTotalCostRisk()
+	{
+		double sum = 0;
+		
+		for (int i = 0; i < requirementCostRisks.length; i++)
+			sum += requirementCostRisks[i];
+		
+		return sum;
+	}
 
 	/**
 	 * Adds a number of requirements to the project
@@ -76,24 +89,24 @@ public class Project
 		{
 			requirementCosts = new int[count];
 			requirementDependencySources = new int[count][];
-			requirementRisk = new double[count];
+			requirementCostRisks = new double[count];
 			return;
 		}
 		
 		int[] newCosts = new int[requirementCosts.length + count];
 		int[][] newDependencySources = new int[requirementCosts.length + count][];
-		double[] newRequirementRisk = new double[requirementRisk.length + count];
+		double[] newRequirementRisk = new double[requirementCostRisks.length + count];
 		
 		for (int i = 0; i < requirementCosts.length; i++)
 		{
 			newCosts[i] = requirementCosts[i];
 			newDependencySources[i] = requirementDependencySources[i];
-			newRequirementRisk[i] = requirementRisk[i];
+			newRequirementRisk[i] = requirementCostRisks[i];
 		}
 		
 		this.requirementCosts = newCosts;
 		this.requirementDependencySources = newDependencySources;
-		this.requirementRisk = newRequirementRisk;
+		this.requirementCostRisks = newRequirementRisk;
 	}
 
 	/**
@@ -102,6 +115,14 @@ public class Project
 	public int getRequirementCost(int requirement)
 	{
 		return requirementCosts[requirement];
+	}
+
+	/**
+	 * Returns the cost of a given requirement
+	 */
+	public double getRequirementCostRisk(int requirement)
+	{
+		return requirementCostRisks[requirement];
 	}
 
 	/**
@@ -117,7 +138,7 @@ public class Project
 		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);
 		double minCost = cost * (1.0 - lowerEstimation / 100.0); 
 
-		this.requirementRisk[requirement] = (maxCost - minCost) / 6.0; 
+		this.requirementCostRisks[requirement] = (maxCost - minCost) / 6.0; 
 	}
 	
 	/**
@@ -203,7 +224,7 @@ public class Project
 	{
 		this.customerProfits = new int[count];
 		this.customerRequirements = new int[count][];
-		this.customerRisk = new double[count];
+		this.customerProfitRisks = new double[count];
 	}
 	
 	/**
@@ -222,25 +243,12 @@ public class Project
 	/**
 	 * Returns the total customer related risk attained by the set of requirements
 	 */
-	public double getTotalCustomerRisk()
+	public double getTotalProfitRisk()
 	{
 		double sum = 0;
 		
-		for (int i = 0; i < customerRisk.length; i++)
-			sum += customerRisk[i];
-		
-		return sum;
-	}
-	
-	/**
-	 * Returns the total requirement related risk attained by the set of requirements
-	 */
-	public double getTotalRequirementRisk()
-	{
-		double sum = 0;
-		
-		for (int i = 0; i < requirementRisk.length; i++)
-			sum += requirementRisk[i];
+		for (int i = 0; i < customerProfitRisks.length; i++)
+			sum += customerProfitRisks[i];
 		
 		return sum;
 	}
@@ -251,6 +259,14 @@ public class Project
 	public int getCustomerProfit(int customer)
 	{
 		return customerProfits[customer];
+	}
+
+	/**
+	 * Returns the profit-related risk for a given customer
+	 */
+	public double getCustomerProfitRisk(int customer)
+	{
+		return customerProfitRisks[customer];
 	}
 
 	/**
@@ -266,7 +282,7 @@ public class Project
 		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);
 		double customerMinProfit = profit * (1.0 - lowerEstimation / 100.0); 
 
-		this.customerRisk[customer] = (customerMaxProfit - customerMinProfit) / 6.0; 
+		this.customerProfitRisks[customer] = (customerMaxProfit - customerMinProfit) / 6.0; 
 	}
 
 	/**
@@ -300,22 +316,6 @@ public class Project
 				addCustomerRequirements(i, requirements);
 		
 		return requirements;
-	}
-	
-	/**
-	 * Calculates the cost of attending a set of customers
-	 */
-	public int calculateCost(boolean[] customerSelection)
-	{
-		boolean[] requirements = getCustomersRequirements(customerSelection);
-		
-		int sum = 0;
-		
-		for (int i = 0; i < requirements.length; i++)
-			if (requirements[i])
-				sum += requirementCosts[i];
-
-		return sum;
 	}
 
 	/**
@@ -354,6 +354,22 @@ public class Project
 				addRequirementAndDependencies(source, requirements);
 		}
 	}
+	
+	/**
+	 * Calculates the cost of attending a set of customers
+	 */
+	public int calculateCost(boolean[] customerSelection)
+	{
+		boolean[] requirements = getCustomersRequirements(customerSelection);
+		
+		int sum = 0;
+		
+		for (int i = 0; i < requirements.length; i++)
+			if (requirements[i])
+				sum += requirementCosts[i];
+
+		return sum;
+	}
 
 	/**
 	 * Calculates overall profit achieved by attending a set of customers
@@ -370,23 +386,23 @@ public class Project
 	}
 
 	/**
-	 * Calculates overall customer-related risk attained by attending a set of customers
+	 * Calculates overall profit-related risk attained by attending a set of customers
 	 */
-	public double calculateCustomerRisk(boolean[] customerSelection)
+	public double calculateProfitRisk(boolean[] customerSelection)
 	{
 		double sum = 0;
 		
-		for (int i = 0; i < customerRisk.length; i++)
+		for (int i = 0; i < customerProfitRisks.length; i++)
 			if (customerSelection[i])
-				sum += customerRisk[i];
+				sum += customerProfitRisks[i];
 		
 		return sum;
 	}
 
 	/**
-	 * Calculates overall requirement-related risk attained by attending a set of customers
+	 * Calculates overall cost-related risk attained by attending a set of customers
 	 */
-	public double calculateRequirementRisk(boolean[] customerSelection)
+	public double calculateCostRisk(boolean[] customerSelection)
 	{
 		boolean[] requirements = new boolean[requirementCosts.length];
 		
@@ -401,7 +417,7 @@ public class Project
 		
 		for (int i = 0; i < requirements.length; i++)
 			if (requirements[i])
-				sum += requirementRisk[i];
+				sum += requirementCostRisks[i];
 
 		return sum;
 	}
