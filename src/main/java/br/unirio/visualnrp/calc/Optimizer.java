@@ -73,23 +73,27 @@ public class Optimizer
 		shortName = shortName.substring(0, shortName.lastIndexOf('.'));
 
 		double sum = 0.0;
-		double max = 0;
+		double maxFitness = 0;
 		
 		for (int i = 0; i < CYCLES; i++)
 		{
 			SearchAlgorithm searchAlgorithm = createAlgorithm(algorithm, null, project, budget, riskImportance, constructor);
 			boolean[] solution = searchAlgorithm.execute(calculator);
 
+			Solution sol = new Solution(project);
+			sol.setAllCustomers(solution);
+			double fitness = calculator.evaluate(sol, budget, riskImportance);
+			
 			String s = algorithm.name() + "," + shortName + "," + i + "," + budgetFactor + "," + riskImportance;
-			s += "," + searchAlgorithm.getFitness() + "," + Solution.printSolution(solution);
+			s += "," + fitness + "," + Solution.printSolution(solution);
 			out.println(s);
 			
-			sum += searchAlgorithm.getFitness();
-			if (searchAlgorithm.getFitness() > max) max = searchAlgorithm.getFitness();
+			sum += fitness;
+			if (fitness > maxFitness) maxFitness = fitness;
 			System.out.print("*");
 		}
 
-		System.out.println(String.format(" %-6s\t%-14s\t%.4f\t%.4f", algorithm.name(), shortName + "-" + budgetFactor, (sum/CYCLES), max));
+		System.out.println(String.format(" %-6s\t%-14s\t%.4f\t%.4f", algorithm.name(), shortName + "-" + budgetFactor, (sum/CYCLES), maxFitness));
 	}
 	
 	/**
@@ -158,7 +162,7 @@ public class Optimizer
 	 */
 	public void executeProfit(Iterable<Instance> instances, int[] budgetFactors, String outputFilename) throws Exception
 	{
-		Algorithm[] algorithms = { Algorithm.HC, Algorithm.ILS, Algorithm.VISILS };
+		Algorithm[] algorithms = { Algorithm.HC, Algorithm.ILS/*, Algorithm.VISILS*/ };
 		execute(instances, budgetFactors, new int[] { 0 }, algorithms, outputFilename, new ProfitFitnessCalculator());
 	}
 }

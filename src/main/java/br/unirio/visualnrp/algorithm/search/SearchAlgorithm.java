@@ -22,7 +22,7 @@ public abstract class SearchAlgorithm
 	/**
 	 * Set of requirements to be optimized
 	 */
-	protected Project project;
+	private Project project;
 
 	/**
 	 * Available budget to select requirements
@@ -35,19 +35,24 @@ public abstract class SearchAlgorithm
 	private int riskImportance;
 
 	/**
+	 * Number of fitness evaluations available in the budget
+	 */
+	private int maxEvaluations;
+
+	/**
 	 * A constructor algorithm for initial solutions generation.
 	 */
-	protected Constructor constructor;
+	private Constructor constructor;
 
 	/**
 	 * Number of fitness evaluations executed
 	 */
-	private int evaluations;
+	private int evaluationsConsumed;
 
 	/**
-	 * Number of fitness evaluations available in the budget
+	 * Number of iterations to best solution
 	 */
-	private int maxEvaluations;
+	private int iterationBestFound;
 
 	/**
 	 * Order under which requirements will be accessed
@@ -57,63 +62,74 @@ public abstract class SearchAlgorithm
 	/**
 	 * Best solution found by the Hill Climbing search
 	 */
-	protected boolean[] currentSolution;
+//	protected boolean[] currentSolution;
 
 	/**
 	 * Fitness of the best solution found
 	 */
-	protected double currentFitness;
-
-	/**
-	 * Number of iterations to best solution
-	 */
-	private int iterationBestFound;
+//	protected double currentFitness;
 
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	protected SearchAlgorithm(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
+	protected SearchAlgorithm(PrintWriter detailsFile, Project project, int availableBudget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
 	{
 		this.project = project;
-		this.availableBudget = budget;
+		this.availableBudget = availableBudget;
 		this.riskImportance = riskImportance;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
-		this.evaluations = 0;
+		this.evaluationsConsumed = 0;
 		this.iterationBestFound = 0;
 		this.constructor = constructor;
 		createRandomSelectionOrder(project);
 		checkRandomSelectionOrder(project);
 	}
-
+	
 	/**
-	 * Returns the best solution found by the search process
+	 * Returns the project being optimized
 	 */
-	public boolean[] getBestSolution()
+	protected Project getProject()
 	{
-		return currentSolution;
+		return project;
+	}
+	
+	/**
+	 * Gets the available budget
+	 */
+	protected int getAvailableBudget()
+	{
+		return availableBudget;
+	}
+	
+	/**
+	 * Gets the importance of risk
+	 */
+	protected int getRiskImportance()
+	{
+		return riskImportance;
+	}
+	
+	/**
+	 * Returns the solution constructor to be used
+	 */
+	protected Constructor getConstructor()
+	{
+		return constructor;
 	}
 
 	/**
-	 * Returns the fitness of the best solution
+	 * Returns the number of evaluations consumed during the search
 	 */
-	public double getFitness()
+	public int getEvaluationsConsumed()
 	{
-		return currentFitness;
+		return evaluationsConsumed;
 	}
 
 	/**
-	 * Returns the number of iterations executed
+	 * Returns the maximum number of evaluations to be consumed
 	 */
-	public int getIterations()
-	{
-		return evaluations;
-	}
-
-	/**
-	 * Returns the maximum number of iterations to be executed
-	 */
-	public int getMaximumIterations()
+	public int getMaximumEvaluations()
 	{
 		return maxEvaluations;
 	}
@@ -182,18 +198,18 @@ public abstract class SearchAlgorithm
 					achou = true;
 
 			if (!achou)
-				System.out.println("ERRO DE GERACAO DE INICIO ALEATORIO");
+				throw new RuntimeException("ERRO DE GERACAO DE INICIO ALEATORIO");
 		}
 	}
 
 	/**
 	 * Evaluates the fitness of a solution, saving detail information
 	 */
-	protected double evaluate(Solution solution, IFitnessCalculator calculator)
+	protected double evaluate(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{
-		if (++evaluations % 10000 == 0 && detailsFile != null)
+		if (++evaluationsConsumed % 10000 == 0 && detailsFile != null)
 		{
-			detailsFile.println(evaluations + "; " + currentFitness);
+			detailsFile.println(evaluationsConsumed + "; " + bestFitness);
 		}
 
 		return calculator.evaluate(solution, availableBudget, riskImportance);
@@ -202,30 +218,25 @@ public abstract class SearchAlgorithm
 	/**
 	 * Runs a neighborhood visit starting from a given solution
 	 */
-	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator)
+	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{
-		double startingFitness = evaluate(solution, calculator);
+		double startingFitness = evaluate(solution, calculator, bestFitness);
 
-		if (evaluations > maxEvaluations)
+		if (evaluationsConsumed > maxEvaluations)
 		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 		}
 
-		if (startingFitness > currentFitness)
-		{
-			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
-		}
+		int customerCount = project.getCustomerCount();
 
-		int len = project.getCustomerCount();
-
-		for (int i = 0; i < len; i++)
+		for (int i = 0; i < customerCount; i++)
 		{
 			int customerI = selectionOrder[i];
-
+			
 			solution.flipCustomer(customerI);
-			double neighborFitness = evaluate(solution, calculator);
+			double neighborFitness = evaluate(solution, calculator, bestFitness);
 
-			if (evaluations > maxEvaluations)
+			if (evaluationsConsumed > maxEvaluations)
 			{
 				return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 			}
@@ -244,26 +255,26 @@ public abstract class SearchAlgorithm
 	/**
 	 * Performs the local search starting from a given solution
 	 */
-	protected boolean localSearch(boolean[] solution, IFitnessCalculator calculator)
+	protected Solution localSearch(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{
 		NeighborhoodVisitorResult result;
-		Solution tmpSolution = new Solution(project);
-		tmpSolution.setAllCustomers(solution);
+
+		Solution bestLocalSolution = solution.clone();
+		double bestLocalFitness = calculator.evaluate(bestLocalSolution, availableBudget, riskImportance);
 
 		do
 		{
-			result = visitNeighbors(tmpSolution, calculator);
+			result = visitNeighbors(bestLocalSolution, calculator, bestFitness);
 
-			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > currentFitness)
+			if (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR && result.getNeighborFitness() > bestLocalFitness)
 			{
-				Solution.copySolution(tmpSolution.getSolution(), currentSolution);
-				this.currentFitness = result.getNeighborFitness();
-				this.iterationBestFound = evaluations;
+				bestLocalFitness = result.getNeighborFitness();
+				this.iterationBestFound = evaluationsConsumed;
 			}
 
 		} while (result.getStatus() == NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR);
 
-		return (result.getStatus() == NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
+		return bestLocalSolution;
 	}
 	
 	/**

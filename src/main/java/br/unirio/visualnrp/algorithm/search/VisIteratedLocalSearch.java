@@ -2,7 +2,6 @@ package br.unirio.visualnrp.algorithm.search;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
@@ -13,8 +12,6 @@ import br.unirio.visualnrp.support.PseudoRandom;
 
 public class VisIteratedLocalSearch extends SearchAlgorithm
 {
-	private double bestFitness;
-	private boolean[] bestSol;
 	private int minCustomers;
 	private final int numberSamplingIter;
 
@@ -26,49 +23,51 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 
 	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
-		int customerCount = project.getCustomerCount();
-		bestSol = new boolean[customerCount];
+		RandomSamplingResult rsr = executeRandomSampling(numberSamplingIter, getProject(), calculator);
+		this.minCustomers = rsr.minCustomers;
 
-		this.minCustomers = executeRandomSampling(numberSamplingIter, project, calculator);
+		Solution bestSolution = new Solution(getProject(), rsr.solution);
+		double bestFitness = rsr.fitness;
 
-//		this.currentSolution = new boolean[customerCount];
-//		Solution.copySolution(bestSol, currentSolution);
-		this.currentSolution = constructor.generateSolutionInInterval(minCustomers, project.getCustomerCount());
+		Solution solution = localSearch(bestSolution, calculator, bestFitness);
+		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
 		
-		Solution hcrs = new Solution(project);
-		hcrs.setAllCustomers(currentSolution);
-		this.currentFitness = evaluate(hcrs, calculator);
-
-		localSearch(currentSolution, calculator);
-		Solution.copySolution(currentSolution, bestSol);
-		bestFitness = this.currentFitness;
-
-		while (getIterations() < getMaximumIterations())
+		if (fitness > bestFitness)
 		{
-			boolean[] perturbedSolution = perturbSolution(bestSol, customerCount);
-			localSearch(perturbedSolution, calculator);
-
-			if (shouldAccept(currentFitness, bestFitness))
+			bestSolution = solution;
+			bestFitness = fitness;
+		}
+		
+		while (getEvaluationsConsumed() < getMaximumEvaluations())
+		{
+			Solution startSolution = applyPerturbation(bestSolution);
+			solution = localSearch(startSolution, calculator, bestFitness);
+			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			
+			if (fitness > bestFitness)
 			{
-				Solution.copySolution(currentSolution, bestSol);
-				bestFitness = this.currentFitness;
+				bestSolution = solution;
+				bestFitness = fitness;
 			}
 		}
 
-		return bestSol;
+		return bestSolution.getSolution();
 	}
 
-	private boolean[] perturbSolution(boolean[] solution, int customerCount)
+	/**
+	 * Applies the perturbation operator upon a solution
+	 */
+	private Solution applyPerturbation(Solution solution)
 	{
-		boolean[] newSolution = Arrays.copyOf(solution, customerCount);
+		int customerCount = getProject().getCustomerCount();
 		int amount = 2;
 
 		List<Integer> satisfied = new ArrayList<Integer>();
 		List<Integer> notSatisfied = new ArrayList<Integer>();
 		
-		for (int i = 0; i < solution.length; i++)
+		for (int i = 0; i < customerCount; i++)
 		{
-			if (solution[i] == true)
+			if (solution.isCustomerAttended(i))
 			{
 				satisfied.add(i);
 			} 
@@ -78,95 +77,94 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 			}
 		}
 
+		Solution perturbedSolution = solution.clone();
+
 		for (int i = 0; i < amount; i++)
 		{
 			boolean isAddOperation = true;
 
-			if (canRemoveCustomer(satisfied))
+			if (satisfied.size() > this.minCustomers)
 			{
 				isAddOperation = PseudoRandom.randDouble() <= 0.5;
 			} 
 
-			int customer;
-			
 			if (isAddOperation)
 			{
 				int rand = PseudoRandom.randInt(0, notSatisfied.size()-1);
-				customer = notSatisfied.remove(rand);
+				int customer = notSatisfied.remove(rand);
+				perturbedSolution.flipCustomer(customer);
 				satisfied.add(rand);
 			} 
 			else
 			{
 				int rand = PseudoRandom.randInt(0, satisfied.size()-1);
-				customer = satisfied.remove(rand);
+				int customer = satisfied.remove(rand);
+				perturbedSolution.flipCustomer(customer);
 				notSatisfied.add(rand);
 			}
-
-			newSolution[customer] = !newSolution[customer];
 		}
 
-		return newSolution;
+		return perturbedSolution;
 	}
 
-	private int executeRandomSampling(int numberSamplingIter, Project project, IFitnessCalculator calculator)
+	private RandomSamplingResult executeRandomSampling(int numberSamplingIter, Project project, IFitnessCalculator calculator)
 	{
 		int numberOfCustomersBest = 0;
+		int customerCount = project.getCustomerCount();
+		
 		Solution hcrs = new Solution(project);
+		double bestFitness = Double.MIN_VALUE;
+		boolean[] bestSolution = new boolean[customerCount];
+		
 		Constructor sampConstructor = new RandomConstructor(project);
 //		Constructor sampConstructor = new GreedyConstructor(project);
 
-		for (int numElemens = 1; numElemens <= project.getCustomerCount(); numElemens++)
+		for (int i = 1; i <= customerCount; i++)
 		{
-			for (int deriv = 0; deriv < numberSamplingIter; deriv++)
+			for (int j = 0; j < numberSamplingIter; j++)
 			{
-				boolean[] solution = sampConstructor.generateSolutionWith(numElemens);
+				boolean[] solution = sampConstructor.generateSolutionWith(i);
 				hcrs.setAllCustomers(solution);
-				double solFitness = evaluate(hcrs, calculator);
+				double solutionFitness = evaluate(hcrs, calculator, bestFitness);
 
-				if (solFitness > this.bestFitness)
+				if (solutionFitness > bestFitness)
 				{
-					Solution.copySolution(solution, this.bestSol);
-					this.bestFitness = solFitness;
-					setIterationBestFound(getIterations());
-					numberOfCustomersBest = numElemens;
+					Solution.copySolution(solution, bestSolution);
+					bestFitness = solutionFitness;
+					
+					setIterationBestFound(getEvaluationsConsumed());
+					numberOfCustomersBest = i;
 				}
 			}
 		}
 
-		return numberOfCustomersBest;
+		return new RandomSamplingResult(bestSolution, bestFitness, numberOfCustomersBest);
 	}
 
 	@Override
-	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator)
+	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{
-		double startingFitness = evaluate(solution, calculator);
+		double startingFitness = evaluate(solution, calculator, bestFitness);
 
-		if (getIterations() > getMaximumIterations())
+		if (getEvaluationsConsumed() > getMaximumEvaluations())
 		{
 			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 		}
 
-		if (startingFitness > currentFitness)
-		{
-			return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, startingFitness);
-		}
+		int customerCount = getProject().getCustomerCount();
+		int attendedCustomers = solution.countAttendedCustomers();
 
-		int len = project.getCustomerCount();
-		boolean[] solutionAsArray = new boolean[len];
-		Solution.copySolution(solution.getSolution(), solutionAsArray);
-
-		for (int i = 0; i < len; i++)
+		for (int i = 0; i < customerCount; i++)
 		{
 			int customerI = getSelectionOrderIndex(i);
-			solutionAsArray[customerI] = (solutionAsArray[customerI] == true) ? false : true;
-			int numberOfCustomers = numberOfCustomersServedBySolution(solutionAsArray);
+			int change = solution.isCustomerAttended(customerI) ? -1 : +1;
 
-			if (numberOfCustomers >= minCustomers)
+			if (attendedCustomers + change >= minCustomers)
 			{
 				solution.flipCustomer(customerI);
-				double neighborFitness = evaluate(solution, calculator);
+				double neighborFitness = evaluate(solution, calculator, bestFitness);
 
-				if (getIterations() > getMaximumIterations())
+				if (getEvaluationsConsumed() > getMaximumEvaluations())
 				{
 					return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.SEARCH_EXHAUSTED);
 				}
@@ -175,41 +173,25 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 				{
 					return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.FOUND_BETTER_NEIGHBOR, neighborFitness);
 				}
-				
+
 				solution.flipCustomer(customerI);
 			}
-
-			solutionAsArray[customerI] = (solutionAsArray[customerI] == true) ? false : true;
 		}
 
 		return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
 	}
+}
 
-	private boolean canRemoveCustomer(List<Integer> satisfied)
+class RandomSamplingResult
+{
+	public boolean[] solution;
+	public double fitness;
+	public int minCustomers;
+
+	public RandomSamplingResult(boolean[] solution, double fitness, int minCustomers)
 	{
-		return (satisfied.size() - 1) >= this.minCustomers;
-	}
-
-	private int numberOfCustomersServedBySolution(boolean[] solution)
-	{
-		int count = 0;
-		
-		for (int i = 0; i < solution.length; i++)
-		{
-			if (solution[i])
-			{
-				count++;
-			}
-		}
-
-		return count;
-	}
-
-	/**
-	 * Determines whether should accept a given solution
-	 */
-	private boolean shouldAccept(double solutionFitness, double bestFitness)
-	{
-		return solutionFitness > bestFitness;
+		this.solution = solution;
+		this.fitness = fitness;
+		this.minCustomers = minCustomers;
 	}
 }
