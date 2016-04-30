@@ -60,16 +60,6 @@ public abstract class SearchAlgorithm
 	private int[] selectionOrder;
 
 	/**
-	 * Best solution found by the Hill Climbing search
-	 */
-//	protected boolean[] currentSolution;
-
-	/**
-	 * Fitness of the best solution found
-	 */
-//	protected double currentFitness;
-
-	/**
 	 * Initializes the Hill Climbing search process
 	 */
 	protected SearchAlgorithm(PrintWriter detailsFile, Project project, int availableBudget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception

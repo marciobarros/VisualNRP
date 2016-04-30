@@ -141,6 +141,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		return new RandomSamplingResult(bestSolution, bestFitness, numberOfCustomersBest);
 	}
 
+	// TODO generalizar esta rotina (calcular attendedCustomers sempre e chamar canFlipCustomer?)
 	@Override
 	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{

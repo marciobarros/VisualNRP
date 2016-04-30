@@ -162,7 +162,7 @@ public class Optimizer
 	 */
 	public void executeProfit(Iterable<Instance> instances, int[] budgetFactors, String outputFilename) throws Exception
 	{
-		Algorithm[] algorithms = { Algorithm.HC, Algorithm.ILS/*, Algorithm.VISILS*/ };
+		Algorithm[] algorithms = { /*Algorithm.HC, Algorithm.ILS, */Algorithm.VISILS };
 		execute(instances, budgetFactors, new int[] { 0 }, algorithms, outputFilename, new ProfitFitnessCalculator());
 	}
 }
