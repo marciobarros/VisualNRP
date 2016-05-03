@@ -1,8 +1,5 @@
 package br.unirio.visualnrp.model;
 
-import br.unirio.visualnrp.support.PseudoRandom;
-
-
 /**
  * Class that represents the next-release problem
  * 
@@ -10,31 +7,46 @@ import br.unirio.visualnrp.support.PseudoRandom;
  */
 public class Project
 {
-	private static int LOWER_RISK = 10;
-	private static int UPPER_RISK = 25;
-	
-	private String name;
+	private Instance instance;
+	private int[][] requirementDependencySources;
+	private int[][] customerRequirements;
 	private int[] requirementCosts;
+	private double[] requirementCostMinimumEstimate;
+	private double[] requirementCostMaximumEstimate;
 	private double[] requirementCostRisks;
 	private double[] requirementWorstCost;
-	private int[][] requirementDependencySources;
 	private int[] customerProfits;
+	private double[] customerProfitMinimumEstimate;
+	private double[] customerProfitMaximumEstimate;
 	private double[] customerProfitRisks;
-	private int[][] customerRequirements;
 	
 	/**
 	 * Creates a project, given its name
 	 */
-	public Project(String name)
+	public Project(Instance instance)
 	{
-		this.name = name;
+		this.instance = instance;
+		this.requirementDependencySources = null;
+		this.customerRequirements = null;
+		
 		this.requirementCosts = null;
+		this.requirementCostMinimumEstimate = null;
+		this.requirementCostMaximumEstimate = null;
 		this.requirementCostRisks = null;
 		this.requirementWorstCost = null;
-		this.requirementDependencySources = null;
+
 		this.customerProfits = null;
-		this.customerRequirements = null;
+		this.customerProfitMinimumEstimate = null;
+		this.customerProfitMaximumEstimate = null;
 		this.customerProfitRisks = null;
+	}
+	
+	/**
+	 * Returns the instance of the project
+	 */
+	public Instance getInstance()
+	{
+		return instance;
 	}
 	
 	/**
@@ -42,7 +54,7 @@ public class Project
 	 */
 	public String getName()
 	{
-		return name;
+		return instance.getName();
 	}
 	
 	/**
@@ -91,26 +103,35 @@ public class Project
 		{
 			requirementCosts = new int[count];
 			requirementCostRisks = new double[count];
+			requirementCostMinimumEstimate = new double[count];
+			requirementCostMaximumEstimate = new double[count];
 			requirementWorstCost = new double[count];
 			requirementDependencySources = new int[count][];
 			return;
 		}
 		
-		int[] newCosts = new int[requirementCosts.length + count];
-		double[] newRequirementRisk = new double[requirementCostRisks.length + count];
-		double[] newRequirementWorstCost = new double[requirementWorstCost.length + count];
-		int[][] newDependencySources = new int[requirementCosts.length + count][];
+		int len = requirementCosts.length;
+		int[] newCosts = new int[len + count];
+		double[] newRequirementRisk = new double[len + count];
+		double[] newRequirementCostMinimumEstimate = new double[len + count];
+		double[] newRequirementCostMaximumEstimate = new double[len + count];
+		double[] newRequirementWorstCost = new double[len + count];
+		int[][] newDependencySources = new int[len + count][];
 		
-		for (int i = 0; i < requirementCosts.length; i++)
+		for (int i = 0; i < len; i++)
 		{
 			newCosts[i] = requirementCosts[i];
 			newRequirementRisk[i] = requirementCostRisks[i];
+			newRequirementCostMinimumEstimate[i] = requirementCostMinimumEstimate[i];
+			newRequirementCostMaximumEstimate[i] = requirementCostMaximumEstimate[i];
 			newRequirementWorstCost[i] = requirementWorstCost[i];
 			newDependencySources[i] = requirementDependencySources[i];
 		}
 		
 		this.requirementCosts = newCosts;
 		this.requirementCostRisks = newRequirementRisk;
+		this.requirementCostMinimumEstimate = newRequirementCostMinimumEstimate;
+		this.requirementCostMaximumEstimate = newRequirementCostMaximumEstimate;
 		this.requirementWorstCost = newRequirementWorstCost;
 		this.requirementDependencySources = newDependencySources;
 	}
@@ -145,15 +166,6 @@ public class Project
 	public void setRequirementCost(int requirement, int cost)
 	{
 		requirementCosts[requirement] = cost;
-
-		int upperEstimation = PseudoRandom.randInt(LOWER_RISK, UPPER_RISK);
-		double maxCost = cost * (1.0 + upperEstimation / 100.0); 
-
-		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);
-		double minCost = cost * (1.0 - lowerEstimation / 100.0); 
-
-		this.requirementWorstCost[requirement] = maxCost;
-		this.requirementCostRisks[requirement] = (maxCost - minCost) / 6.0; 
 	}
 	
 	/**
@@ -240,6 +252,8 @@ public class Project
 		this.customerProfits = new int[count];
 		this.customerRequirements = new int[count][];
 		this.customerProfitRisks = new double[count];
+		this.customerProfitMinimumEstimate = new double[count];
+		this.customerProfitMaximumEstimate = new double[count];
 	}
 	
 	/**
@@ -290,14 +304,6 @@ public class Project
 	public void setCustomerProfit(int customer, int profit)
 	{
 		this.customerProfits[customer] = profit;
-
-		int upperEstimation = PseudoRandom.randInt(LOWER_RISK, UPPER_RISK);
-		double customerMaxProfit = profit * (1.0 + upperEstimation / 100.0); 
-
-		int lowerEstimation = PseudoRandom.randInt(0, LOWER_RISK);
-		double customerMinProfit = profit * (1.0 - lowerEstimation / 100.0); 
-
-		this.customerProfitRisks[customer] = (customerMaxProfit - customerMinProfit) / 6.0; 
 	}
 
 	/**
@@ -475,5 +481,20 @@ public class Project
 	public int getRequirementPrecedentIndex(int requirementIndex, int index)
 	{
 		return requirementDependencySources[requirementIndex][index];
+	}
+
+	public void setRequirementCostEstimates(int requirementIndex, double minimumCost, double maximumCost)
+	{
+		this.requirementCostMinimumEstimate[requirementIndex] = minimumCost;
+		this.requirementCostMaximumEstimate[requirementIndex] = maximumCost;
+		this.requirementWorstCost[requirementIndex] = maximumCost;
+		this.requirementCostRisks[requirementIndex] = (maximumCost - minimumCost) / 6.0;
+	}
+
+	public void setCustomerProfitEstimates(int customerIndex, double minimumProfit, double maximumProfit)
+	{
+		this.customerProfitMinimumEstimate[customerIndex] = minimumProfit;
+		this.customerProfitMaximumEstimate[customerIndex] = maximumProfit;
+		this.customerProfitRisks[customerIndex] = (maximumProfit - minimumProfit) / 6.0;
 	}
 }

@@ -9,6 +9,7 @@ import br.unirio.visualnrp.model.Project;
  * 
  * @author Marcio
  */
+@SuppressWarnings("unused")
 public class Solution
 {
 	private Project project;
@@ -29,7 +30,7 @@ public class Solution
 		this.project = project;
 
 		prepareCustomersRequirementPrecedences();
-		checkConsistency(project);
+		//checkConsistency(project);
 		
 		int customerCount = project.getCustomerCount();
 		this.currentCustomerSelection = new boolean[customerCount];
@@ -66,12 +67,7 @@ public class Solution
 		int requirementCount = project.getRequirementCount();
 		this.currentRequirementSelection = Arrays.copyOf(source.currentRequirementSelection, requirementCount);
 		
-		// TODO aqui poderia apontar para o mesmo ponteiro, dado que estas informações não mudam. Não há necessidade de duplicar
-		this.customerRequirementsPrecedences = new int[customerCount][requirementCount+1];
-
-		for (int i = 0; i < customerCount; i++)
-			for (int j = 0; j < requirementCount+1; j++)
-				this.customerRequirementsPrecedences[i][j] = source.customerRequirementsPrecedences[i][j];
+		this.customerRequirementsPrecedences = source.customerRequirementsPrecedences;
 		
 		this.cost = source.cost;
 		this.profit = source.profit;
@@ -185,7 +181,6 @@ public class Solution
 	 */
 	private void checkCustomerRequirementAndPrecedents(Project project, int customerIndex, int requirementIndex)
 	{
-		// TODO posso desligar este método e usar apenas em caso de erro conhecido
 		int requirementCount = project.getRequirementCount();
 		
 		if (!checkCustomerHasRequirement(customerIndex, requirementIndex, requirementCount+1))
@@ -287,7 +282,6 @@ public class Solution
 	 */
 	public void flipCustomer(int customerIndex)
 	{
-		// TODO tem um custo grande aqui ... será que melhora se copiar as informacoes do projeto para esta classe?
 		if (this.currentCustomerSelection[customerIndex])
 		{
 			this.currentCustomerSelection[customerIndex] = false;
@@ -309,13 +303,10 @@ public class Solution
 	 */
 	private void addCustomerRequirementsCostAndRisk(int customerIndex)
 	{
-		// TODO tem um custo grande aqui. Será que melhora se copiar o array de customer para uma variável temporária?
-		
-		// TODO: será que melhora se copiar os dados do projeto para cá?
-		
 		int requirementIndex;
+		int[] requirementsCustomer = customerRequirementsPrecedences[customerIndex];
 
-		for (int i = 0; (requirementIndex = customerRequirementsPrecedences[customerIndex][i]) >= 0; i++)
+		for (int i = 0; (requirementIndex = requirementsCustomer[i]) >= 0; i++)
 		{
 			if (currentRequirementSelection[requirementIndex] == 0)
 			{
@@ -334,8 +325,9 @@ public class Solution
 	private void removeCustomerRequirementsCostAndRisk(int customerIndex)
 	{
 		int requirementIndex;
+		int[] requirementsCustomer = customerRequirementsPrecedences[customerIndex];
 
-		for (int i = 0; (requirementIndex = customerRequirementsPrecedences[customerIndex][i]) >= 0; i++)
+		for (int i = 0; (requirementIndex = requirementsCustomer[i]) >= 0; i++)
 		{
 			currentRequirementSelection[requirementIndex]--;
 

@@ -74,8 +74,8 @@ public class RiskLandscapeReport
 	{
 		for (Instance instance : instances)
 		{
-			RequirementReader reader = new RequirementReader(instance.getFilename());
-			Project project = reader.execute();
+			RequirementReader reader = new RequirementReader();
+			Project project = reader.execute(instance);
 			
 			System.out.println("Processing " + project.getName() + " ...");
 			calculator.prepare(project);

@@ -23,6 +23,8 @@ public class MainProgram
 	// LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt
 	public static void main(String[] args) throws Exception
 	{
+//		System.in.read();
+
 		if (args.length == 0)
 		{
 			System.out.println("Command missing. " + CommandFactory.getInstance().generalHelp());
@@ -40,7 +42,6 @@ public class MainProgram
 		try
 		{
 			command.parseParameters(args);
-			System.in.read();
 			command.run();
 		}
 		catch(Exception e)

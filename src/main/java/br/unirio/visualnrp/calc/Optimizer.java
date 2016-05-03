@@ -25,7 +25,7 @@ public class Optimizer
 	/**
 	 * Number of optimization cycles
 	 */
-	private static int CYCLES = 30;
+	private static int CYCLES = 1;
 	
 	/**
 	 * Maximum number of evaluation rounds for the algorithms
@@ -67,10 +67,6 @@ public class Optimizer
 		int budget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
 		Constructor constructor = new GreedyConstructor(project);
 		calculator.prepare(project);
-		
-		String shortName = project.getName();
-		shortName = shortName.substring(shortName.lastIndexOf('/') + 1);
-		shortName = shortName.substring(0, shortName.lastIndexOf('.'));
 
 		double sum = 0.0;
 		double maxFitness = 0;
@@ -84,7 +80,7 @@ public class Optimizer
 			sol.setAllCustomers(solution);
 			double fitness = calculator.evaluate(sol, budget, riskImportance);
 			
-			String s = algorithm.name() + "," + shortName + "," + i + "," + budgetFactor + "," + riskImportance;
+			String s = algorithm.name() + "," + project.getName() + "," + i + "," + budgetFactor + "," + riskImportance;
 			s += "," + fitness + "," + Solution.printSolution(solution);
 			out.println(s);
 			
@@ -93,7 +89,7 @@ public class Optimizer
 			System.out.print("*");
 		}
 
-		System.out.println(String.format(" %-6s\t%-14s\t%.4f\t%.4f", algorithm.name(), shortName + "-" + budgetFactor, (sum/CYCLES), maxFitness));
+		System.out.println(String.format(" %-6s\t%-14s\t%.4f\t%.4f", algorithm.name(), project.getName() + "-" + budgetFactor, (sum/CYCLES), maxFitness));
 	}
 	
 	/**
@@ -129,8 +125,8 @@ public class Optimizer
 
 		for (Instance instance : instances)
 		{
-			RequirementReader reader = new RequirementReader(instance.getFilename());
-			Project project = reader.execute();
+			RequirementReader reader = new RequirementReader();
+			Project project = reader.execute(instance);
 			System.out.println("Processing " + project.getName() + " ...");
 			createReport(out, project, budgetFactors, riskImportances, algorithms, calculator);
 		}
@@ -162,7 +158,7 @@ public class Optimizer
 	 */
 	public void executeProfit(Iterable<Instance> instances, int[] budgetFactors, String outputFilename) throws Exception
 	{
-		Algorithm[] algorithms = { Algorithm.HC, Algorithm.ILS, Algorithm.VISILS };
+		Algorithm[] algorithms = { Algorithm.HC/*, Algorithm.ILS, Algorithm.VISILS*/ };
 		execute(instances, budgetFactors, new int[] { 0 }, algorithms, outputFilename, new ProfitFitnessCalculator());
 	}
 }

@@ -12,6 +12,7 @@ import br.unirio.visualnrp.support.PseudoRandom;
  * 
  * @author Marcio
  */
+@SuppressWarnings("unused")
 public abstract class SearchAlgorithm 
 {
 	/**
@@ -73,7 +74,7 @@ public abstract class SearchAlgorithm
 		this.iterationBestFound = 0;
 		this.constructor = constructor;
 		createRandomSelectionOrder(project);
-		checkRandomSelectionOrder(project);
+		//checkRandomSelectionOrder(project);
 	}
 	
 	/**

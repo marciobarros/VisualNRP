@@ -45,8 +45,8 @@ public class ReleaseLandscapeReport
 		// TODO rever isto
 		IFitnessCalculator calculator = new ProfitFitnessCalculator();
 		
-		RequirementReader reader = new RequirementReader(instance.getFilename());
-		Project project = reader.execute();
+		RequirementReader reader = new RequirementReader();
+		Project project = reader.execute(instance);
 		System.out.println("Source: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
 
 		Constructor constructor = new GreedyConstructor(project);
@@ -81,7 +81,7 @@ public class ReleaseLandscapeReport
 		int attendedCustomers = countAttendedCustomers(solution);
 		boolean[] resolvedRequirements = source.getCustomersRequirements(solution);
 
-		Project target = new Project(source.getName());
+		Project target = new Project(source.getInstance());
 		target.setCustomerCount(source.getCustomerCount() - attendedCustomers);
 		target.addRequirements(source.getRequirementCount());
 		
