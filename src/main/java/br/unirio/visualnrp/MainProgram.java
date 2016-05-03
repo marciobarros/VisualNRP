@@ -40,6 +40,7 @@ public class MainProgram
 		try
 		{
 			command.parseParameters(args);
+			System.in.read();
 			command.run();
 		}
 		catch(Exception e)
