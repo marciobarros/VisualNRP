@@ -67,42 +67,35 @@ class ProfitRiskFitnessCalculator implements IFitnessCalculator
 	}
 }
 
+interface ILandscapeCalculator
+{
+	double evaluate(Solution solution);
+}
+
 /**
  * Class that supports the calculation of fitness for cost risk
  * 
  * @author marciobarros
  */
-class CostRiskFitnessCalculator implements IFitnessCalculator
+class CostRiskFitnessCalculator implements ILandscapeCalculator
 {
 	private double totalCost;
-	private double totalProfit;
 	private double totalRisk;
+	private double availableBudget;
+	private double riskImportance;
+	private double maximumProfit;
 	
-	public void prepare(Project project)
+	public CostRiskFitnessCalculator(Project project, double availableBudget, int riskImportance, int maximumProfit)
 	{
 		this.totalCost = project.getTotalCost();
-		this.totalProfit = project.getTotalProfit();
 		this.totalRisk = project.getTotalCostRisk();
+		this.availableBudget = availableBudget;
+		this.riskImportance = riskImportance / 100.0;
+		this.maximumProfit = maximumProfit;
 	}
 	
-	public double evaluate(Solution solution, double availableBudget, double riskImportance)
+	public double evaluate(Solution solution)
 	{
-//		int cost = solution.getCost();
-//		
-//		if (cost > availableBudget)
-//			return -cost;
-//
-//		// begin new
-//		double worstCost = solution.getWorstCost();
-//		double alfa = riskImportance / 100.0;
-//		double ratio = (worstCost - cost) / cost;
-//
-//		if (ratio > alfa)
-//			return -cost;
-//		
-//		return solution.getProfit();
-//		// end new
-		
 		int cost = solution.getCost();
 		
 		if (cost > availableBudget)
@@ -110,8 +103,40 @@ class CostRiskFitnessCalculator implements IFitnessCalculator
 
 		int profit = solution.getProfit();
 		double risk = solution.getCostRisk();
+		return (1 - riskImportance) * profit / maximumProfit + riskImportance * (totalRisk - risk) / totalRisk;
+	}
+}
 
+/**
+ * Class that supports the calculation of fitness for cost cap
+ * 
+ * @author marciobarros
+ */
+class CostCapFitnessCalculator implements ILandscapeCalculator
+{
+	private double availableBudget;
+	private double riskImportance;
+	
+	public CostCapFitnessCalculator(Project project, double availableBudget, int riskImportance)
+	{
+		this.availableBudget = availableBudget;
+		this.riskImportance = riskImportance;
+	}
+	
+	public double evaluate(Solution solution)
+	{
+		int cost = solution.getCost();
+		
+		if (cost > availableBudget)
+			return -cost;
+
+		double worstCost = solution.getWorstCost();
 		double alfa = riskImportance / 100.0;
-		return (1 - alfa) * profit / totalProfit + alfa * (totalRisk - risk) / totalRisk;
+		double ratio = (worstCost - cost) / cost;
+
+		if (ratio > alfa)
+			return -cost;
+		
+		return solution.getProfit();
 	}
 }

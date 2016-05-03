@@ -8,18 +8,9 @@ import br.unirio.visualnrp.command.CommandFactory;
  * 
  * @author Marcio
  */
-@SuppressWarnings("unused")
 public class MainProgram
 {
-	private void runOptimizer() throws Exception
-	{
-//		new Optimizer()
-//			.clean()
-//			.execute(classicInstanceFilenames, new double[] {0.3, 0.5, 0.7})
-//			.execute(realisticInstanceFilenames, new double[] {0.3, 0.5});
-	}
-
-	// LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt
+	// LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 	// LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt
 	public static void main(String[] args) throws Exception
 	{

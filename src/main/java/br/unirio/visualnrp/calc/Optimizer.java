@@ -149,8 +149,8 @@ public class Optimizer
 	 */
 	public void executeCostRisk(Iterable<Instance> instances, int[] budgetFactors, int[] riskImportances, String outputFilename) throws Exception
 	{
-		Algorithm[] algorithms = { Algorithm.ILS, Algorithm.VISILS };
-		execute(instances, budgetFactors, riskImportances, algorithms, outputFilename, new CostRiskFitnessCalculator());
+//		Algorithm[] algorithms = { Algorithm.ILS, Algorithm.VISILS };
+//		execute(instances, budgetFactors, riskImportances, algorithms, outputFilename, new CostRiskFitnessCalculator());
 	}
 	
 	/**

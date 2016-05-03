@@ -3,7 +3,7 @@ package br.unirio.visualnrp.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.unirio.visualnrp.calc.RiskLandscapeReport;
+import br.unirio.visualnrp.calc.CostRiskLandscapeReport;
 import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.InstanceCategory;
 
@@ -106,7 +106,7 @@ class CommandProfitRiskLandscape extends Command
 	@Override
 	public boolean run() throws Exception
 	{
-		new RiskLandscapeReport().executeProfitRisk(instances, budgets, riskLevels, outputFilename);
+//		new CostRiskLandscapeReport().executeProfitRisk(instances, budgets, riskLevels, outputFilename);
 		return false;
 	}
 
