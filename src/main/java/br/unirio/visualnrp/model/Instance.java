@@ -2,8 +2,6 @@ package br.unirio.visualnrp.model;
 
 import java.util.List;
 
-import lombok.Getter;
-
 /**
  * Enumeration of the instances available for processing
  * 
@@ -29,9 +27,9 @@ public enum Instance
 	NRP_M3("nrp-m3", InstanceCategory.REALISTIC),
 	NRP_M4("nrp-m4", InstanceCategory.REALISTIC);
 
-	private @Getter String name;
+	private String name;
 
-	private @Getter InstanceCategory category;
+	private InstanceCategory category;
 
 	/**
 	 * Initializes the instance
@@ -40,6 +38,22 @@ public enum Instance
 	{
 		this.name = name;
 		this.category = category;
+	}
+	
+	/**
+	 * Returns the name of the instance
+	 */
+	public String getName()
+	{
+		return name;
+	}
+	
+	/**
+	 * Returns the category of the instance
+	 */
+	public InstanceCategory getCategory()
+	{
+		return category;
 	}
 	
 	/**

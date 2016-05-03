@@ -3,8 +3,6 @@ package br.unirio.visualnrp.command;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Getter;
-
 /**
  * Class that represents an abstract command
  * 
@@ -15,12 +13,12 @@ public abstract class Command
 	/**
 	 * The codename for the command
 	 */
-	private @Getter String code;
+	private String code;
 	
 	/**
 	 * A description for the command
 	 */
-	private @Getter String description;
+	private String description;
 	
 	/**
 	 * Parameter help strings
@@ -37,6 +35,22 @@ public abstract class Command
 		this.commandHelp = new StringBuffer();
 	}
 	
+	/**
+	 * Returns the code for the command
+	 */
+	public String getCode()
+	{
+		return code;
+	}
+	
+	/**
+	 * Returns the description of the command
+	 */
+	public String getDescription()
+	{
+		return description;
+	}
+
 	/**
 	 * Returns the index of a given parameter
 	 */

@@ -1,6 +1,5 @@
 package br.unirio.visualnrp.model;
 
-import lombok.Getter;
 
 /**
  * Enumeration of instance categories
@@ -12,8 +11,8 @@ public enum InstanceCategory
 	CLASSIC("classic", "data/requirements/classic"),
 	REALISTIC("realistic", "data/requirements/realistic");
 	
-	private @Getter String name;
-	private @Getter String directory;
+	private String name;
+	private String directory;
 
 	/**
 	 * Initializes an instance category
@@ -24,6 +23,22 @@ public enum InstanceCategory
 		this.directory = directory;
 	}
 	
+	/**
+	 * Returns the name of the instance category
+	 */
+	public String getName()
+	{
+		return name;
+	}
+	
+	/**
+	 * Returns the directory of the instance category
+	 */
+	public String getDirectory()
+	{
+		return directory;
+	}
+
 	/**
 	 * Returns an instance, given its name
 	 */
