@@ -21,11 +21,10 @@ public class CostCapOptimizer extends GenericOptimizer
 	 */
 	private void createReportForInstance(PrintWriter out, Project project, int[] budgetFactors, int[] riskImportances, Algorithm[] algorithms) throws Exception
 	{
-		for (int i = 0; i < budgetFactors.length; i++)
+		for (int budgetFactor : budgetFactors)
 		{
 			for (int riskImportance : riskImportances)
 			{
-				int budgetFactor = budgetFactors[i];
 				int availableBudget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
 				CostCapFitnessCalculator calculator = new CostCapFitnessCalculator(project, availableBudget, riskImportance);
 				

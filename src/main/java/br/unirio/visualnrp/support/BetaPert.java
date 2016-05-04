@@ -1,7 +1,15 @@
 package br.unirio.visualnrp.support;
 
+/**
+ * Class that samples random numbers according to beta distributions
+ * 
+ * @author marciobarros
+ */
 public class BetaPert
 {
+	/**
+	 * Samples a gamma distribution
+	 */
 	private double gamma(double alfa)
 	{
         double y, am, s, x, e;
@@ -24,6 +32,9 @@ public class BetaPert
 	    return x;
 	}
 
+	/**
+	 * Samples a beta distribution
+	 */
 	public double beta(double v, double w, double min, double max)
 	{
 	    double y1 = gamma(v);
@@ -32,6 +43,9 @@ public class BetaPert
 	    return min + x * (max - min);
 	}
 
+	/**
+	 * Samples a beta-PERT distribution
+	 */
 	public double betaPert(double min, double med, double max)
 	{
 	    double mi = (min + 4 * med + max) / 6;

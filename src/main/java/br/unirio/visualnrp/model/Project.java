@@ -14,7 +14,6 @@ public class Project
 	private double[] requirementCostMinimumEstimate;
 	private double[] requirementCostMaximumEstimate;
 	private double[] requirementCostRisks;
-	private double[] requirementWorstCost;
 	private int[] customerProfits;
 	private double[] customerProfitMinimumEstimate;
 	private double[] customerProfitMaximumEstimate;
@@ -33,7 +32,6 @@ public class Project
 		this.requirementCostMinimumEstimate = null;
 		this.requirementCostMaximumEstimate = null;
 		this.requirementCostRisks = null;
-		this.requirementWorstCost = null;
 
 		this.customerProfits = null;
 		this.customerProfitMinimumEstimate = null;
@@ -105,7 +103,6 @@ public class Project
 			requirementCostRisks = new double[count];
 			requirementCostMinimumEstimate = new double[count];
 			requirementCostMaximumEstimate = new double[count];
-			requirementWorstCost = new double[count];
 			requirementDependencySources = new int[count][];
 			return;
 		}
@@ -115,7 +112,6 @@ public class Project
 		double[] newRequirementRisk = new double[len + count];
 		double[] newRequirementCostMinimumEstimate = new double[len + count];
 		double[] newRequirementCostMaximumEstimate = new double[len + count];
-		double[] newRequirementWorstCost = new double[len + count];
 		int[][] newDependencySources = new int[len + count][];
 		
 		for (int i = 0; i < len; i++)
@@ -124,7 +120,6 @@ public class Project
 			newRequirementRisk[i] = requirementCostRisks[i];
 			newRequirementCostMinimumEstimate[i] = requirementCostMinimumEstimate[i];
 			newRequirementCostMaximumEstimate[i] = requirementCostMaximumEstimate[i];
-			newRequirementWorstCost[i] = requirementWorstCost[i];
 			newDependencySources[i] = requirementDependencySources[i];
 		}
 		
@@ -132,7 +127,6 @@ public class Project
 		this.requirementCostRisks = newRequirementRisk;
 		this.requirementCostMinimumEstimate = newRequirementCostMinimumEstimate;
 		this.requirementCostMaximumEstimate = newRequirementCostMaximumEstimate;
-		this.requirementWorstCost = newRequirementWorstCost;
 		this.requirementDependencySources = newDependencySources;
 	}
 
@@ -149,7 +143,7 @@ public class Project
 	 */
 	public double getRequirementWorstCost(int requirement)
 	{
-		return requirementWorstCost[requirement];
+		return requirementCostMaximumEstimate[requirement];
 	}
 
 	/**
@@ -487,7 +481,6 @@ public class Project
 	{
 		this.requirementCostMinimumEstimate[requirementIndex] = minimumCost;
 		this.requirementCostMaximumEstimate[requirementIndex] = maximumCost;
-		this.requirementWorstCost[requirementIndex] = maximumCost;
 		this.requirementCostRisks[requirementIndex] = (maximumCost - minimumCost) / 6.0;
 	}
 
