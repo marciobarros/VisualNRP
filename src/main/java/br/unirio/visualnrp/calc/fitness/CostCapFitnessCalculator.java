@@ -10,13 +10,11 @@ import br.unirio.visualnrp.model.Project;
  */
 public class CostCapFitnessCalculator implements IFitnessCalculator
 {
-	private double totalCost;
 	private double availableBudget;
 	private double riskImportance;
 	
 	public CostCapFitnessCalculator(Project project, double availableBudget, int riskImportance)
 	{
-		this.totalCost = project.getTotalCost();
 		this.availableBudget = availableBudget;
 		this.riskImportance = riskImportance / 100.0;
 	}
@@ -26,13 +24,13 @@ public class CostCapFitnessCalculator implements IFitnessCalculator
 		int cost = solution.getCost();
 		
 		if (cost > availableBudget)
-			return -cost / totalCost;
+			return -cost;
 
 		double worstCost = solution.getWorstCost();
 		double ratio = (worstCost - cost) / cost;
 
 		if (ratio > riskImportance)
-			return -cost / totalCost;
+			return -cost;
 		
 		return solution.getProfit();
 	}
