@@ -3,7 +3,7 @@ package br.unirio.visualnrp.algorithm.search;
 import java.io.PrintWriter;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
-import br.unirio.visualnrp.calc.IFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 
 /**
@@ -26,9 +26,9 @@ public class HillClimbing extends SearchAlgorithm
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	public HillClimbing(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
+	public HillClimbing(PrintWriter detailsFile, Project project, int maxEvaluations, Constructor constructor) throws Exception
 	{
-		super(detailsFile, project, budget, riskImportance, maxEvaluations, constructor);
+		super(detailsFile, project, maxEvaluations, constructor);
 		this.randomRestartCount = 0;
 		this.restartBestFound = 0;
 	}
@@ -58,7 +58,7 @@ public class HillClimbing extends SearchAlgorithm
 		double bestFitness = evaluate(bestSolution, calculator, 0.0);
 
 		Solution solution = localSearch(bestSolution, calculator, bestFitness);
-		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+		double fitness = calculator.evaluate(solution);
 		
 		if (fitness > bestFitness)
 		{
@@ -72,7 +72,7 @@ public class HillClimbing extends SearchAlgorithm
 			
 			Solution startSolution = new Solution(getProject(), getConstructor().generateSolution());
 			solution = localSearch(startSolution, calculator, bestFitness);
-			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			fitness = calculator.evaluate(solution);
 			
 			if (fitness > bestFitness)
 			{

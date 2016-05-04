@@ -10,8 +10,6 @@ import br.unirio.visualnrp.command.CommandFactory;
  */
 public class MainProgram
 {
-	// LCRR -i classic -b 30 -r 20 50 80 -o results/landscape/cost-risk/%s.txt -s 253958446296927
-	// LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt
 	public static void main(String[] args) throws Exception
 	{
 //		System.in.read();

@@ -1,6 +1,7 @@
-package br.unirio.visualnrp.command;
+package br.unirio.visualnrp.command.landscape;
 
-import br.unirio.visualnrp.calc.ReleaseLandscapeReport;
+import br.unirio.visualnrp.calc.landscape.ReleaseLandscapeReport;
+import br.unirio.visualnrp.command.Command;
 import br.unirio.visualnrp.model.Instance;
 
 /**
@@ -8,7 +9,7 @@ import br.unirio.visualnrp.model.Instance;
  * 
  * @author Marcio
  */
-class CommandReleasePlanningLandscape extends Command
+public class CommandReleasePlanningLandscape extends Command
 {
 	private String instanceName = "";
 	

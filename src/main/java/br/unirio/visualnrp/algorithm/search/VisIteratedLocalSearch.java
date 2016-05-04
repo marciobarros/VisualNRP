@@ -6,7 +6,7 @@ import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
-import br.unirio.visualnrp.calc.IFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -15,9 +15,9 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 	private int minCustomers;
 	private final int numberSamplingIter;
 
-	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int budget, int riskImportance, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
+	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
 	{
-		super(detailsFile, project, budget, riskImportance, maxEvaluations, constructor);
+		super(detailsFile, project, maxEvaluations, constructor);
 		this.numberSamplingIter = numberSamplingIter;
 	}
 
@@ -30,7 +30,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		double bestFitness = rsr.fitness;
 
 		Solution solution = localSearch(bestSolution, calculator, bestFitness);
-		double fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+		double fitness = calculator.evaluate(solution);
 		
 		if (fitness > bestFitness)
 		{
@@ -42,7 +42,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		{
 			Solution startSolution = applyPerturbation(bestSolution);
 			solution = localSearch(startSolution, calculator, bestFitness);
-			fitness = calculator.evaluate(solution, getAvailableBudget(), getRiskImportance());
+			fitness = calculator.evaluate(solution);
 			
 			if (fitness > bestFitness)
 			{

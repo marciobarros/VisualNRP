@@ -9,3 +9,10 @@ Improving Heuristics for the Next Release Problem through Landscape Visualizatio
 Search-Based Software Engineering, 222-227 (2014)</i>
 
 FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
+
+
+LCRR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o results/landscape/cost-risk/%s.txt -s 253958446296927
+
+LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt -s 253958446296927
+
+OCR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o output_ocr_classic.txt -s 253958446296927

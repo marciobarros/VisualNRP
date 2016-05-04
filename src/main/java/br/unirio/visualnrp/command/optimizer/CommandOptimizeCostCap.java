@@ -1,39 +1,44 @@
-package br.unirio.visualnrp.command;
+package br.unirio.visualnrp.command.optimizer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import br.unirio.visualnrp.calc.Optimizer;
+import br.unirio.visualnrp.calc.optimizer.CostCapOptimizer;
+import br.unirio.visualnrp.command.Command;
 import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.InstanceCategory;
 import br.unirio.visualnrp.support.Conversion;
 import br.unirio.visualnrp.support.PseudoRandom;
 
 /**
- * Class that represents the command to run the profit optimization report
+ * Class that represents the command that generates the cost cap optimization process
  * 
- * @author Marcio
+ * @author marciobarros
  */
-public class CommandOptimizeProfit extends Command
+public class CommandOptimizeCostCap extends Command
 {
 	private List<Instance> instances;
 	private int[] budgets;
+	private int[] riskLevels;
 	private String outputFilename;
 	private long seed;
 	
 	/**
 	 * Initializes the command
 	 */
-	public CommandOptimizeProfit()
+	public CommandOptimizeCostCap()
 	{
-		super("OP", "Optimization report for profit");
+		super("OCC", "Optimization report for the cost cap problem");
 		
 		this.instances = new ArrayList<Instance>();
 		this.budgets = null;
+		this.riskLevels = null;
 		this.outputFilename = "";
+		this.seed = -1;
 		
 		addParameterHelp("-i", "List of instances, separated by whitespaces, or category");
 		addParameterHelp("-b", "Budget percentiles, separated by whitespaces (0 to 100)");
+		addParameterHelp("-r", "Risk levels, separated by whitespaces (0 to 100)");
 		addParameterHelp("-o", "Output filename");
 		addParameterHelp("-s", "Fixed random number generator seed (optional)");
 	}
@@ -46,8 +51,9 @@ public class CommandOptimizeProfit extends Command
 	{
 		parseInstanceParameter(parameters);
 		parseBudgetParameter(parameters);
-		
-		this.outputFilename = getParameterValue(parameters, "-o");
+		parseRiskLevelParameter(parameters);
+
+		outputFilename = getParameterValue(parameters, "-o");
 		
 		String sSeedValue = getOptionalParameterValue(parameters, "-s");
 		this.seed = Conversion.safeParseLong(sSeedValue, System.nanoTime());
@@ -93,13 +99,25 @@ public class CommandOptimizeProfit extends Command
 	}
 
 	/**
+	 * Parse the parameter related to risk levels
+	 */
+	private void parseRiskLevelParameter(String[] parameters) throws Exception
+	{
+		String[] values = getParameterValues(parameters, "-r");
+		this.riskLevels = asIntegerArray(values);
+		
+		if (this.riskLevels.length == 0)
+			throw new Exception("No risk level was found.");
+	}
+
+	/**
 	 * Runs the command
 	 */
 	@Override
 	public boolean run() throws Exception
 	{
 		PseudoRandom.init(seed);
-		new Optimizer().executeProfit(instances, budgets, outputFilename);
+		new CostCapOptimizer().execute(instances, budgets, riskLevels, outputFilename);
 		return false;
 	}
 
@@ -109,6 +127,6 @@ public class CommandOptimizeProfit extends Command
 	@Override
 	public Command clone()
 	{
-		return new CommandOptimizeProfit();
+		return new CommandOptimizeCostCap();
 	}
 }

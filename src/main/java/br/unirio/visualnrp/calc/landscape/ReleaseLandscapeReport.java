@@ -1,4 +1,4 @@
-package br.unirio.visualnrp.calc;
+package br.unirio.visualnrp.calc.landscape;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -7,6 +7,7 @@ import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.GreedyConstructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.search.VisIteratedLocalSearch;
+import br.unirio.visualnrp.calc.fitness.ProfitFitnessCalculator;
 import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
@@ -32,26 +33,15 @@ public class ReleaseLandscapeReport
 	 */
 	public boolean execute(Instance instance, String outputFilename) throws Exception
 	{
-		// TODO gravar vários rounds no mesmo arquivo
-		
-		// TODO generalizar para todas as instâncias
-		
-		// TODO diferentes modos ativados por linha de comando
-		
-		// TODO criar arquivo readme no GitHub
-		
-		// TODO tirar prefixo sobol dos pacotes
-		
-		// TODO rever isto
-		IFitnessCalculator calculator = new ProfitFitnessCalculator();
-		
 		RequirementReader reader = new RequirementReader();
 		Project project = reader.execute(instance);
 		System.out.println("Source: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
 
+		int availableBudget = (int) (0.3 * project.getTotalCost());
+		ProfitFitnessCalculator calculator = new ProfitFitnessCalculator(project, availableBudget);
+
 		Constructor constructor = new GreedyConstructor(project);
-		int budget = (int) (0.3 * project.getTotalCost());
-		VisIteratedLocalSearch visils = new VisIteratedLocalSearch(null, project, budget, 0, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
+		VisIteratedLocalSearch visils = new VisIteratedLocalSearch(null, project, MAXEVALUATIONS, SAMPLE_SIZE, constructor);
 		boolean[] firstSolution = visils.execute(calculator);
 		
 		Project secondProject = createProjectRemovingSolution(project, firstSolution);
@@ -59,7 +49,7 @@ public class ReleaseLandscapeReport
 		System.out.println("Target: profit=" + secondProject.getTotalProfit() + "; cost=" + secondProject.getTotalCost());
 
 		Constructor constructor2 = new GreedyConstructor(secondProject);
-		visils = new VisIteratedLocalSearch(null, secondProject, budget, 0, MAXEVALUATIONS, SAMPLE_SIZE, constructor2);
+		visils = new VisIteratedLocalSearch(null, secondProject, MAXEVALUATIONS, SAMPLE_SIZE, constructor2);
 		boolean[] secondSolution = visils.execute(calculator);
 
 		Project thirdProject = createProjectRemovingSolution(secondProject, secondSolution);

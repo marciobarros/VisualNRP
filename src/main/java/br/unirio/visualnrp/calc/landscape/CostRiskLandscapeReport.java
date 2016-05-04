@@ -1,4 +1,4 @@
-package br.unirio.visualnrp.calc;
+package br.unirio.visualnrp.calc.landscape;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -8,6 +8,8 @@ import java.util.List;
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.search.Solution;
+import br.unirio.visualnrp.calc.fitness.CostRiskFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
@@ -27,7 +29,7 @@ public class CostRiskLandscapeReport
 	/**
 	 * Creates the landscape report for a given instance and budget factor
 	 */
-	private void createLandscapeForBudget(PrintWriter out, Project project, Constructor constructor, int budgetFactor, int riskImportance, ILandscapeCalculator calculator) throws Exception
+	private void createLandscapeForBudget(PrintWriter out, Project project, Constructor constructor, int budgetFactor, int riskImportance, IFitnessCalculator calculator) throws Exception
 	{
 		Solution sSolution = new Solution(project);
 
@@ -68,7 +70,7 @@ public class CostRiskLandscapeReport
 			for (int riskImportance : riskImportances)
 			{
 				System.out.println("Processing " + project.getName() + " ...");
-				ILandscapeCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfit);
+				IFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfit);
 				createLandscapeForBudget(out, project, constructor, budgetFactor, riskImportance, calculator);
 			}
 		}

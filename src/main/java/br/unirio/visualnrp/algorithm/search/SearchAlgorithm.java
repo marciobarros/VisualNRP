@@ -3,7 +3,8 @@ package br.unirio.visualnrp.algorithm.search;
 import java.io.PrintWriter;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
-import br.unirio.visualnrp.calc.IFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
+import br.unirio.visualnrp.calc.fitness.ProfitFitnessCalculator;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.support.PseudoRandom;
 
@@ -24,16 +25,6 @@ public abstract class SearchAlgorithm
 	 * Set of requirements to be optimized
 	 */
 	private Project project;
-
-	/**
-	 * Available budget to select requirements
-	 */
-	private int availableBudget;
-	
-	/**
-	 * Relative importance of risk for the analyst
-	 */
-	private int riskImportance;
 
 	/**
 	 * Number of fitness evaluations available in the budget
@@ -63,11 +54,9 @@ public abstract class SearchAlgorithm
 	/**
 	 * Initializes the Hill Climbing search process
 	 */
-	protected SearchAlgorithm(PrintWriter detailsFile, Project project, int availableBudget, int riskImportance, int maxEvaluations, Constructor constructor) throws Exception
+	protected SearchAlgorithm(PrintWriter detailsFile, Project project, int maxEvaluations, Constructor constructor) throws Exception
 	{
 		this.project = project;
-		this.availableBudget = availableBudget;
-		this.riskImportance = riskImportance;
 		this.maxEvaluations = maxEvaluations;
 		this.detailsFile = detailsFile;
 		this.evaluationsConsumed = 0;
@@ -83,22 +72,6 @@ public abstract class SearchAlgorithm
 	protected Project getProject()
 	{
 		return project;
-	}
-	
-	/**
-	 * Gets the available budget
-	 */
-	protected int getAvailableBudget()
-	{
-		return availableBudget;
-	}
-	
-	/**
-	 * Gets the importance of risk
-	 */
-	protected int getRiskImportance()
-	{
-		return riskImportance;
 	}
 	
 	/**
@@ -203,7 +176,7 @@ public abstract class SearchAlgorithm
 			detailsFile.println(evaluationsConsumed + "; " + bestFitness);
 		}
 
-		return calculator.evaluate(solution, availableBudget, riskImportance);
+		return calculator.evaluate(solution);
 	}
 
 	/**
@@ -251,7 +224,7 @@ public abstract class SearchAlgorithm
 		NeighborhoodVisitorResult result;
 
 		Solution bestLocalSolution = solution.clone();
-		double bestLocalFitness = calculator.evaluate(bestLocalSolution, availableBudget, riskImportance);
+		double bestLocalFitness = calculator.evaluate(bestLocalSolution);
 
 		do
 		{
@@ -275,7 +248,7 @@ public abstract class SearchAlgorithm
 }
 
 /**
- * Set of potential results from visiting neighbours
+ * Set of potential results from visiting neighbors
  */
 enum NeighborhoodVisitorStatus
 {
