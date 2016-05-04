@@ -13,6 +13,8 @@ public class CostCapFitnessCalculator implements IFitnessCalculator
 	private double availableBudget;
 	private double riskImportance;
 	
+	// TODO calcular ratio medio e maximo
+	
 	public CostCapFitnessCalculator(Project project, double availableBudget, int riskImportance)
 	{
 		this.availableBudget = availableBudget;

@@ -6,15 +6,12 @@ plotInstance <- function(basedir, name) {
 	datafile <- paste(basedir, "results/landscape/cost-cap/", name, ".txt", sep="")
 	data <- read.table(datafile, sep=",", header=TRUE)
 	#data <- subset(data, data$fit >= 0)
-
-	data30 <- subset(data, data$budget == 30 & data$risk == 20)
-	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 20%", sep=""))
 	
-	data30 <- subset(data, data$budget == 30 & data$risk == 40)
-	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 40%", sep=""))
+	data30 <- subset(data, data$budget == 30 & data$risk == 8)
+	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 8%", sep=""))
 	
-	data30 <- subset(data, data$budget == 30 & data$risk == 60)
-	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 60%", sep=""))
+	data30 <- subset(data, data$budget == 30 & data$risk == 10)
+	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 10%", sep=""))
 }
 
 #
@@ -28,7 +25,7 @@ basedir <- "~/Desktop/Codigos/VisualNRP/";
 # PLOTS ALL CLASSIC INSTANCES
 #
 pdf("cost-cap-plot-full.pdf", width=11.69, height=8.27)
-par(mfrow=c(5, 3))
+par(mfrow=c(5, 2))
 par(mar=c(2.1, 3.1, 2.1, 1.1))
 
 plotInstance(basedir, "nrp1");
