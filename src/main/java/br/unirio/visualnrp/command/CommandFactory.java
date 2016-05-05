@@ -9,6 +9,7 @@ import br.unirio.visualnrp.command.landscape.CommandReleasePlanningLandscape;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostCap;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostRisk;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfit;
+import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfitRisk;
 
 /**
  * Class that represents a command factory
@@ -39,6 +40,7 @@ public class CommandFactory
 		this.commands.add(new CommandCostCapLandscape());
 		
 		this.commands.add(new CommandOptimizeCostRisk());
+		this.commands.add(new CommandOptimizeProfitRisk());
 		this.commands.add(new CommandOptimizeCostCap());
 		this.commands.add(new CommandOptimizeProfit());
 	}

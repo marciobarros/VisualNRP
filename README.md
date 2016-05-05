@@ -29,3 +29,5 @@ OP -i classic -b 30 50 70 -o output_op_classic.txt -s 253958446296927
 OCC -i classic -b 30 50 70 -r 8 -o output_occ_classic.txt -s 253958446296927
 
 OCR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o output_ocr_classic.txt -s 253958446296927
+
+OPR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o output_opr_classic.txt -s 253958446296927
