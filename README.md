@@ -16,7 +16,7 @@ LANDSCAPES
 
 LCRR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 
-LCCR -i classic -b 30 -r 8 10 -o results/landscape/cost-cap/%s.txt -s 253958446296927
+LCCR -i classic -b 30 -r 8 -o results/landscape/cost-cap/%s.txt -s 253958446296927
 
 LPRR -i classic -b 30 -r 20 50 80 -o results/landscape/profit-risk/%s.txt -s 253958446296927
 
@@ -26,6 +26,6 @@ OPTIMIZERS
 
 OP -i classic -b 30 50 70 -o output_op_classic.txt -s 253958446296927
 
-OCC -i classic -b 30 -r 20 40 60 -o output_occ_classic.txt -s 253958446296927
+OCC -i classic -b 30 50 70 -r 8 -o output_occ_classic.txt -s 253958446296927
 
 OCR -i classic -b 30 -r 10 20 40 -m 1204 4970 7488 10690 18510 -o output_ocr_classic.txt -s 253958446296927

@@ -9,7 +9,6 @@ import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
 import br.unirio.visualnrp.algorithm.search.Solution;
 import br.unirio.visualnrp.calc.fitness.CostCapFitnessCalculator;
-import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Instance;
 import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
@@ -29,7 +28,7 @@ public class CostCapLandscapeReport
 	/**
 	 * Creates the landscape report for a given instance and budget factor
 	 */
-	private void createLandscapeForBudget(PrintWriter out, Project project, Constructor constructor, int budgetFactor, int riskImportance, IFitnessCalculator calculator) throws Exception
+	private void createLandscapeForBudget(PrintWriter out, Project project, Constructor constructor, int budgetFactor, int riskImportance, CostCapFitnessCalculator calculator) throws Exception
 	{
 		Solution sSolution = new Solution(project);
 
@@ -40,7 +39,7 @@ public class CostCapLandscapeReport
 				boolean[] solution = constructor.generateSolutionWith(i);
 				sSolution.setAllCustomers(solution);
 				double fitness = calculator.evaluate(sSolution);
-				out.println(budgetFactor + "," + riskImportance + "," + i + "," + fitness);
+				out.println(budgetFactor + "," + riskImportance + "," + i + "," + fitness + "," + calculator.getRatio(sSolution));
 			}
 		}
 	}
@@ -58,7 +57,7 @@ public class CostCapLandscapeReport
 		
 		FileWriter outFile = new FileWriter(landscapeFilename);
 		PrintWriter out = new PrintWriter(outFile);
-		out.println("budget,risk,cust,fit");
+		out.println("budget,risk,cust,fit,ratio");
 		
 		for (int budgetFactor : budgetFactors)
 		{
@@ -67,7 +66,7 @@ public class CostCapLandscapeReport
 			for (int riskImportance : riskImportances)
 			{
 				System.out.println("Processing " + project.getName() + " ...");
-				IFitnessCalculator calculator = new CostCapFitnessCalculator(project, availableBudget, riskImportance);
+				CostCapFitnessCalculator calculator = new CostCapFitnessCalculator(project, availableBudget, riskImportance);
 				createLandscapeForBudget(out, project, constructor, budgetFactor, riskImportance, calculator);
 			}
 		}

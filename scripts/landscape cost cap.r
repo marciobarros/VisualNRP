@@ -5,13 +5,10 @@ plotInstance <- function(basedir, name) {
 
 	datafile <- paste(basedir, "results/landscape/cost-cap/", name, ".txt", sep="")
 	data <- read.table(datafile, sep=",", header=TRUE)
-	#data <- subset(data, data$fit >= 0)
 	
 	data30 <- subset(data, data$budget == 30 & data$risk == 8)
 	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 8%", sep=""))
-	
-	data30 <- subset(data, data$budget == 30 & data$risk == 10)
-	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 10%", sep=""))
+	hist(data30$ratio[data30$ratio >= 0.04 & data30$ratio <= 0.10], main=paste(name, "-30", sep=""), breaks=100)
 }
 
 #

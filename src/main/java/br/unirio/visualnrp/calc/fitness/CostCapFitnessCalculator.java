@@ -13,8 +13,6 @@ public class CostCapFitnessCalculator implements IFitnessCalculator
 	private double availableBudget;
 	private double riskImportance;
 	
-	// TODO calcular ratio medio e maximo
-	
 	public CostCapFitnessCalculator(Project project, double availableBudget, int riskImportance)
 	{
 		this.availableBudget = availableBudget;
@@ -35,5 +33,17 @@ public class CostCapFitnessCalculator implements IFitnessCalculator
 			return -cost;
 		
 		return solution.getProfit();
+	}
+	
+	public double getRatio(Solution solution)
+	{
+		int cost = solution.getCost();
+		
+		if (cost > availableBudget)
+			return -1.0;
+
+		double worstCost = solution.getWorstCost();
+		double ratio = (worstCost - cost) / cost;
+		return ratio;
 	}
 }
