@@ -2,6 +2,7 @@
 # Clean up
 #
 rm(list=ls())
+options(scipen=4, digits=2)
 
 
 #
