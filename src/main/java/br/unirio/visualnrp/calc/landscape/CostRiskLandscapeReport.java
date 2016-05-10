@@ -11,7 +11,10 @@ import br.unirio.visualnrp.algorithm.search.Solution;
 import br.unirio.visualnrp.calc.fitness.CostRiskFitnessCalculator;
 import br.unirio.visualnrp.calc.fitness.IFitnessCalculator;
 import br.unirio.visualnrp.model.Instance;
+import br.unirio.visualnrp.model.MaximumValues;
+import br.unirio.visualnrp.model.MaximumValuesList;
 import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.reader.MaximumValuesReader;
 import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
@@ -48,7 +51,7 @@ public class CostRiskLandscapeReport
 	/**
 	 * Creates the landscape report for a given instance
 	 */
-	private void createLandscapeForInstance(Project project, int[] budgetFactors, int[] riskImportances, int[] maximumProfits, double[] maximumRisks, String outputFilename) throws Exception
+	private void createLandscapeForInstance(Project project, Instance instance, int[] budgetFactors, int[] riskImportances, MaximumValuesList maximumValues, String outputFilename) throws Exception
 	{
 		Constructor constructor = new RandomConstructor(project);
 
@@ -60,19 +63,19 @@ public class CostRiskLandscapeReport
 		PrintWriter out = new PrintWriter(outFile);
 		out.println("budget,risk,cust,fit");
 		
-		for (int budgetIndex = 0; budgetIndex < budgetFactors.length; budgetIndex++)
+		for (int budgetFactor : budgetFactors)
 		{
-			int budgetFactor = budgetFactors[budgetIndex];
 			double availableBudget = project.getTotalCost() * (budgetFactor / 100.0);
-
-			int maximumProfit = maximumProfits[budgetIndex];
-			double maximumRisk = maximumRisks[budgetIndex]; 
+			MaximumValues values = maximumValues.getMaximumValues(instance, budgetFactor);
 			
-			for (int riskImportance : riskImportances)
+			if (values != null)
 			{
-				System.out.println("Processing " + project.getName() + " ...");
-				IFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfit, maximumRisk);
-				createLandscapeForBudget(out, project, constructor, budgetFactor, riskImportance, calculator);
+				for (int riskImportance : riskImportances)
+				{
+					System.out.println("Processing " + project.getName() + " ...");
+					IFitnessCalculator calculator = new CostRiskFitnessCalculator(project, availableBudget, riskImportance, values.getMaximumProfit(), values.getMaximumCostRisk());
+					createLandscapeForBudget(out, project, constructor, budgetFactor, riskImportance, calculator);
+				}
 			}
 		}
 		
@@ -83,14 +86,16 @@ public class CostRiskLandscapeReport
 	/**
 	 * Creates the landscape report
 	 */
-	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, int[][] maximumProfits, double[][] maximumRisks, String outputFilename) throws Exception
+	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, String outputFilename) throws Exception
 	{
+		MaximumValuesList maximumValues = new MaximumValuesReader().execute();
+		
 		for (int instanceIndex = 0; instanceIndex < instances.size(); instanceIndex++)
 		{
 			Instance instance = instances.get(instanceIndex);
 			RequirementReader reader = new RequirementReader();
 			Project project = reader.execute(instance);
-			createLandscapeForInstance(project, budgetFactors, riskImportances, maximumProfits[instanceIndex], maximumRisks[instanceIndex], outputFilename);
+			createLandscapeForInstance(project, instance, budgetFactors, riskImportances, maximumValues, outputFilename);
 		}
 	}
 }

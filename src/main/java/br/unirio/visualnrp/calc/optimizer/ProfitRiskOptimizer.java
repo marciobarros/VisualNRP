@@ -6,7 +6,10 @@ import java.util.List;
 import br.unirio.visualnrp.algorithm.search.Algorithm;
 import br.unirio.visualnrp.calc.fitness.ProfitRiskFitnessCalculator;
 import br.unirio.visualnrp.model.Instance;
+import br.unirio.visualnrp.model.MaximumValues;
+import br.unirio.visualnrp.model.MaximumValuesList;
 import br.unirio.visualnrp.model.Project;
+import br.unirio.visualnrp.reader.MaximumValuesReader;
 import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
@@ -19,19 +22,23 @@ public class ProfitRiskOptimizer extends GenericOptimizer
 	/**
 	 * Creates the optimization report for a given instance
 	 */
-	private void createReportForInstance(PrintWriter out, Project project, int[] budgetFactors, int[] riskImportances, int[] maximumProfits, Algorithm[] algorithms) throws Exception
+	private void createReportForInstance(PrintWriter out, Project project, Instance instance, int[] budgetFactors, int[] riskImportances, MaximumValuesList maximumValues, Algorithm[] algorithms) throws Exception
 	{
-		for (int i = 0; i < budgetFactors.length; i++)
+		for (int budgetFactor : budgetFactors)
 		{
-			for (int riskImportance : riskImportances)
+			int availableBudget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
+			MaximumValues values = maximumValues.getMaximumValues(instance, budgetFactor);
+			
+			if (values != null)
 			{
-				int budgetFactor = budgetFactors[i];
-				int availableBudget = (int) (project.getTotalCost() * (budgetFactor / 100.0));
-				ProfitRiskFitnessCalculator calculator = new ProfitRiskFitnessCalculator(project, availableBudget, riskImportance, maximumProfits[i]);
-				
-				for (Algorithm algorithm : algorithms)
+				for (int riskImportance : riskImportances)
 				{
-					createReportForBudget(out, project, budgetFactor, riskImportance, algorithm, calculator);
+					ProfitRiskFitnessCalculator calculator = new ProfitRiskFitnessCalculator(project, availableBudget, riskImportance, values.getMaximumProfit());
+					
+					for (Algorithm algorithm : algorithms)
+					{
+						createReportForBudget(out, project, budgetFactor, riskImportance, algorithm, calculator);
+					}
 				}
 			}
 		}
@@ -40,8 +47,10 @@ public class ProfitRiskOptimizer extends GenericOptimizer
 	/**
 	 * Runs the optimization report
 	 */
-	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, int[][] maximumProfits, String outputFilename) throws Exception
+	public void execute(List<Instance> instances, int[] budgetFactors, int[] riskImportances, String outputFilename) throws Exception
 	{
+		MaximumValuesList maximumValues = new MaximumValuesReader().execute();
+		
 		PrintWriter out = createOutputFile(outputFilename);
 
 		for (int i = 0; i < instances.size(); i++)
@@ -50,7 +59,7 @@ public class ProfitRiskOptimizer extends GenericOptimizer
 			RequirementReader reader = new RequirementReader();
 			Project project = reader.execute(instance);
 			System.out.println("Processing " + project.getName() + " ...");
-			createReportForInstance(out, project, budgetFactors, riskImportances, maximumProfits[i], ALGORITHM_ILS_VISILS);
+			createReportForInstance(out, project, instance, budgetFactors, riskImportances, maximumValues, ALGORITHM_ILS_VISILS);
 		}
 		
 		out.close();
