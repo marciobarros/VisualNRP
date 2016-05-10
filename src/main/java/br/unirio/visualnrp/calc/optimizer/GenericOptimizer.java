@@ -23,7 +23,7 @@ public class GenericOptimizer
 	/**
 	 * Number of optimization cycles
 	 */
-	private static int CYCLES = 1;
+	private static int CYCLES = 30;
 
 	/**
 	 * Algorithm configuration - all algorithms
