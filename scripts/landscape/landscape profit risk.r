@@ -13,8 +13,8 @@ plotInstance <- function(basedir, name, focused) {
 	data30 <- subset(data, data$budget == 30 & data$risk == 10)
 	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Risk 10%", sep=""))
 	
-	data50 <- subset(data, data$budget == 30 & data$risk == 25)
-	boxplot(data50$fit~data50$cust, main=paste(name, "-30 / Risk 25%", sep=""))
+	data50 <- subset(data, data$budget == 30 & data$risk == 20)
+	boxplot(data50$fit~data50$cust, main=paste(name, "-30 / Risk 20%", sep=""))
 	
 	data70 <- subset(data, data$budget == 30 & data$risk == 40)
 	boxplot(data70$fit~data70$cust, main=paste(name, "-30 / Risk 40%", sep=""))
@@ -24,8 +24,8 @@ plotInstance <- function(basedir, name, focused) {
 # BASE DIRECTORY
 #
 # basedir <- "/Users/marcio"
-basedir <- "/Users/marcio.barros"
-# basedir <- "~";
+# basedir <- "/Users/marcio.barros"
+basedir <- "~";
 
 #
 # PLOTS ALL CLASSIC INSTANCES IN FULL MODE

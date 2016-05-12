@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.unirio.visualnrp.command.landscape.CommandCostCapLandscape;
 import br.unirio.visualnrp.command.landscape.CommandCostRiskLandscape;
+import br.unirio.visualnrp.command.landscape.CommandProfitRiskLandscape;
 import br.unirio.visualnrp.command.landscape.CommandReleasePlanningLandscape;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostCap;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeCostRisk;
@@ -40,6 +41,7 @@ public class CommandFactory
 		this.commands.add(new CommandReleasePlanningLandscape());
 		this.commands.add(new CommandCostRiskLandscape());
 		this.commands.add(new CommandCostCapLandscape());
+		this.commands.add(new CommandProfitRiskLandscape());
 		
 		this.commands.add(new CommandOptimizeCostRiskOnly());
 		this.commands.add(new CommandOptimizeCostRisk());
