@@ -8,15 +8,19 @@ plotInstance <- function(basedir, name) {
 	
 	data30 <- subset(data, data$budget == 30 & data$risk == 8)
 	boxplot(data30$fit~data30$cust, main=paste(name, "-30 / Cap 8%", sep=""))
-	hist(data30$ratio[data30$ratio >= 0.04 & data30$ratio <= 0.10], main=paste(name, "-30", sep=""), breaks=100)
+	
+	histdata <- data30$ratio[data30$ratio >= 0.04 & data30$ratio <= 0.10]
+	h <- hist(histdata,  breaks=100, plot=FALSE)
+	h$density = h$counts / sum(h$counts)  * 100
+	plot(h, freq=FALSE, main=paste(name, "-30", sep=""), ylab="Frequency (%)", xlab="Risk / cost ratio")
 }
 
 #
 # BASE DIRECTORY
 #
 # basedir <- "/Users/marcio"
-basedir <- "/Users/marcio.barros"
-# basedir <- "~";
+# basedir <- "/Users/marcio.barros"
+basedir <- "~";
 
 #
 # PLOTS ALL CLASSIC INSTANCES
