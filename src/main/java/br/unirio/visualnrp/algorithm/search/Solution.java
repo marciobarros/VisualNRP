@@ -362,6 +362,23 @@ public class Solution
 
 		return s + "]";
 	}
+	
+	/**
+	 * Loads a solution from a string
+	 */
+	public boolean fromString(String s)
+	{
+		if (s.length() != currentCustomerSelection.length+2)
+			return false;
+		
+		boolean[] customers = new boolean[currentCustomerSelection.length];
+		
+		for (int i = 0; i < currentCustomerSelection.length; i++)
+			customers[i] = (s.charAt(i+1) == 'S');
+		
+		setAllCustomers(customers);
+		return true;
+	}
 
 	/**
 	 * Copies a source solution to a target one
