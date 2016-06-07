@@ -23,9 +23,9 @@ plotInstance <- function(basedir, name, focused) {
 #
 # BASE DIRECTORY
 #
-# basedir <- "/Users/marcio"
+basedir <- "/Users/marcio"
 # basedir <- "/Users/marcio.barros"
-basedir <- "~";
+# basedir <- "~";
 
 #
 # PLOTS ALL CLASSIC INSTANCES IN FULL MODE
