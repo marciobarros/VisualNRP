@@ -88,7 +88,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 				isAddOperation = PseudoRandom.randDouble() <= 0.5;
 			} 
 
-			if (isAddOperation)
+			if (isAddOperation && notSatisfied.size() > 0)
 			{
 				int rand = PseudoRandom.randInt(0, notSatisfied.size()-1);
 				int customer = notSatisfied.remove(rand);
