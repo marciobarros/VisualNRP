@@ -1,7 +1,10 @@
-package br.unirio.visualnrp.calc.landscape;
+package br.unirio.visualnrp.calc.optimizer;
 
+import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import br.unirio.visualnrp.algorithm.constructor.Constructor;
 import br.unirio.visualnrp.algorithm.constructor.RandomConstructor;
@@ -13,59 +16,103 @@ import br.unirio.visualnrp.model.Project;
 import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
- * Class that represents the landscape report
+ * Class that performs the release planning optimization
  * 
- * @author marciobarros
+ * @author Marcio
  */
-public class ReleaseLandscapeReport
+public class ReleasePlanningOptimizer
 {
 	/**
-	 * Number of solutions per costumer
+	 * Number of optimization cycles
 	 */
-	private static int SOLUTIONS_PER_CUSTOMER = 100;
+	private static int CYCLES = 30;
+
+	/**
+	 * Runs the optimization report for release planning
+	 */
+	public void execute(List<Instance> instances, int budgetFactor, String outputFilename, int rounds, double interestRate) throws Exception
+	{
+		PrintWriter out = createOutputFile(outputFilename);
+
+		for (int i = 0; i < instances.size(); i++)
+		{
+			Instance instance = instances.get(i);
+			RequirementReader reader = new RequirementReader();
+			Project project = reader.execute(instance);
+			System.out.println("Processing " + project.getName() + " ...");
+		
+			createReportForBudget(out, project, budgetFactor, rounds, interestRate, Algorithm.VISILS);
+			createReportForBudget(out, project, budgetFactor, rounds, interestRate, Algorithm.ILS);
+		}
+
+		out.close();
+	}
 	
 	/**
-	 * Creates the landscape reports without risk for all instances
+	 * Creates the output file and writes the header
 	 */
-	public void execute(Instance instance, int budgetFactor, String outputFilename, int rounds) throws Exception
+	protected PrintWriter createOutputFile(String outputFilename) throws IOException
 	{
-		String landscapeFilename = String.format(outputFilename, instance.getName());
-		FileWriter outFile = new FileWriter(landscapeFilename);
+		File file = new File(outputFilename);
+		
+		if (file.getParentFile() != null)
+			file.getParentFile().mkdirs();
+		
+		FileWriter outFile = new FileWriter(outputFilename);
 		PrintWriter out = new PrintWriter(outFile);
-		out.println("budget,round,cust,fit");
+		out.println("alg,instance,cycle,budget,risk,fit,solution");
+		
+		return out;
+	}
 
-		RequirementReader reader = new RequirementReader();
-		Project project = reader.execute(instance);
-		System.out.println("Source: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
+	/**
+	 * Creates the optimization report for a given instance and budget factor
+	 */
+	protected void createReportForBudget(PrintWriter out, Project project, int budgetFactor, int rounds, double interestRate, Algorithm algorithm) throws Exception
+	{
+		double sum = 0.0;
+		double maxFitness = 0;
+		
+		for (int i = 0; i < CYCLES; i++)
+		{
+			double fitness = createReportForCycle(project, budgetFactor, rounds, interestRate, algorithm);
+			out.println(algorithm.name() + "," + project.getName() + "," + i + "," + budgetFactor + "," + rounds + "," + interestRate + "," + fitness);
+			
+			sum += fitness;
+			if (fitness > maxFitness) maxFitness = fitness;
+			System.out.print("*");
+		}
 
+		System.out.println(String.format(" %-6s\t%-14s\t%.4f\t%.4f", algorithm.name(), project.getName() + "-" + budgetFactor, (sum/CYCLES), maxFitness));
+	}
+
+	/**
+	 * Creates a report for a given optimization cycle
+	 */
+	private double createReportForCycle(Project project, int budgetFactor, int rounds, double interestRate, Algorithm algorithm) throws Exception
+	{
 		Constructor constructor = new RandomConstructor(project);
 		int availableBudget = (int) (project.getTotalCost() * budgetFactor / 100.0);
-		SearchAlgorithm visils = Algorithm.createAlgorithm(Algorithm.VISILS, null, project, constructor);
+		SearchAlgorithm searchAlgorithm = Algorithm.createAlgorithm(algorithm, null, project, constructor);
 
 		ProfitFitnessCalculator calculator = new ProfitFitnessCalculator(project, availableBudget);
-		boolean[] solution = visils.execute(calculator);
-
-		System.out.println("Solution: profit=" + project.calculateProfit(solution) + "; cost=" + project.calculateCost(solution));
-		createLandscape(out, project, constructor, budgetFactor, 0);
+		boolean[] solution = searchAlgorithm.execute(calculator);
+		double presentValue = project.calculateProfit(solution);
 		
 		for (int i = 1; i < rounds; i++)
 		{
 			project = createProjectRemovingSolution(project, solution);
-			System.out.println("Target: profit=" + project.getTotalProfit() + "; cost=" + project.getTotalCost());
 
-			Constructor nextConstructor = new RandomConstructor(project);
+			constructor = new RandomConstructor(project);
 			availableBudget = (int) (project.getTotalCost() * budgetFactor / 100.0);
-			visils = Algorithm.createAlgorithm(Algorithm.VISILS, null, project, nextConstructor);
+			searchAlgorithm = Algorithm.createAlgorithm(algorithm, null, project, constructor);
 
 			calculator = new ProfitFitnessCalculator(project, availableBudget);
-			solution = visils.execute(calculator);
-
-			System.out.println("Solution: profit=" + project.calculateProfit(solution) + "; cost=" + project.calculateCost(solution));
-			createLandscape(out, project, nextConstructor, budgetFactor, i);
+			solution = searchAlgorithm.execute(calculator);
+			presentValue = presentValue * (1 + interestRate / 100.0) + project.calculateProfit(solution);
 		}
-
-		out.close();
-		outFile.close();
+		
+		return presentValue;
 	}
 
 	/**
@@ -155,36 +202,5 @@ public class ReleaseLandscapeReport
 				customerPosition++;
 			}
 		}
-	}
-	
-	/**
-	 * Creates the landscape report for a given instance and budget factor
-	 */
-	private void createLandscape(PrintWriter out, Project project, Constructor constructor, int budgetFactor, int round) throws Exception
-	{
-		double availableBudget = project.getTotalCost() * (budgetFactor / 100.0);
-
-		for (int i = 1; i <= project.getCustomerCount(); i++)
-		{
-			for (int j = 0; j < SOLUTIONS_PER_CUSTOMER; j++)
-			{
-				boolean[] solution = constructor.generateSolutionWith(i);
-				int fitness = evaluate(solution, project, availableBudget);
-				out.println(budgetFactor + "," + round + "," + i + "," + fitness);
-			}
-		}
-	}
-	
-	/**
-	 * Calculates the fitness of a given solution
-	 */
-	private int evaluate(boolean[] solution, Project project, double availableBudget) throws Exception
-	{
-		int cost = project.calculateCost(solution);
-		
-		if (cost > availableBudget)
-			return -cost;
-
-		return project.calculateProfit(solution);
 	}
 }

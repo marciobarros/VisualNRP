@@ -10,7 +10,7 @@ import br.unirio.visualnrp.reader.MaximumValuesReader;
 import br.unirio.visualnrp.reader.RequirementReader;
 
 /**
- * Class that analizes the best solutions under the CRO-NRP formulation
+ * Class that analizes the best solutions under the OCR-NRP formulation
  * 
  * @author Marcio
  */

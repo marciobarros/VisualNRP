@@ -20,6 +20,8 @@ LCCR -i classic -b 30 -r 8 -o results/landscape/cost-cap/%s.txt -s 2539584462969
 
 LPRR -i classic -b 30 -r 10 20 40 -o results/landscape/profit-risk/%s.txt -s 253958446296927
 
+LRPR -i nrp1 -b 15 -r 6 -o results/landscape/release/%s.txt -s 253958446296927
+
 ==================================
 OPTIMIZERS
 ==================================
@@ -35,3 +37,5 @@ OCR -i classic -b 30 -r 10 20 40 -o output_ocr_classic.txt -s 253958446296927
 OCC -i classic -b 30 -r 8 -o output_occ_classic.txt -s 253958446296927
 
 OPR -i classic -b 30 -r 10 20 40 -o output_opr_classic.txt -s 253958446296927
+
+ORL -i classic -b 15 -r 6 -t 5 -o output_orl_classic.txt -s 253958446296927
