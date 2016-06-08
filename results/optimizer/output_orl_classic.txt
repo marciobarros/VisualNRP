@@ -1,4 +1,4 @@
-alg,instance,cycle,budget,risk,fit,solution
+alg,instance,cycle,budget,rounds,rate,fit
 VISILS,nrp1,0,15,6,5.0,2693.0980350000004
 VISILS,nrp1,1,15,6,5.0,2666.29115375
 VISILS,nrp1,2,15,6,5.0,2683.4662525000003
