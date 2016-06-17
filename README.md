@@ -10,9 +10,10 @@ Search-Based Software Engineering, 222-227 (2014)</i>
 
 FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
 
-==================================
-LANDSCAPES
-==================================
+
+<h2>LANDSCAPES</h2>
+
+To run the landscape reports for the "Cost-Risk as an Objective" (CRR), ""
 
 LCRR -i classic -b 30 -r 10 20 40 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 
@@ -22,9 +23,8 @@ LPRR -i classic -b 30 -r 10 20 40 -o results/landscape/profit-risk/%s.txt -s 253
 
 LRPR -i nrp1 -b 15 -r 6 -o results/landscape/release/%s.txt -s 253958446296927
 
-==================================
-OPTIMIZERS
-==================================
+
+<h2>OPTIMIZERS</h2>
 
 OP -i classic -b 30 50 70 -o output_op_classic.txt -s 253958446296927
 
