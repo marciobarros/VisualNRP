@@ -13,7 +13,8 @@ FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
 
 <h2>LANDSCAPES</h2>
 
-To run the landscape reports for the "Cost-Risk as an Objective" (CRR), ""
+To run the landscape reports for the "Cost-Risk as an Objective" (CRR), "Cost-Risk as a Constraint" (CCR), 
+"Profit-Risk as an Objective" (PRR), and "Release Planning" (RPR), use the following commands:
 
 LCRR -i classic -b 30 -r 10 20 40 -o results/landscape/cost-risk/%s.txt -s 253958446296927
 
