@@ -1,17 +1,12 @@
-## VisualNRP
+# VisualNRP
 
 Implementations of Hill Climbing and Iterated Local Search algorithms for the Next Release Problem.
 These implementations use a graphical pattern observed in problem instances to narrow the search space.
 
-More information in:
-<i>Fuchshuber, R. and Barros. M.
-Improving Heuristics for the Next Release Problem through Landscape Visualization
-Search-Based Software Engineering, 222-227 (2014)</i>
-
-FIXED RANDOM SEED: 253958446296927 (system time ou 26/04/2016)
+Fixed random seed rationale: miliseconds system time on 2016-04-26
 
 
-<h2>LANDSCAPES</h2>
+## LANDSCAPES
 
 To run the landscape reports for the "Cost-Risk as an Objective" (CRR), "Cost-Risk as a Constraint" (CCR), 
 "Profit-Risk as an Objective" (PRR), and "Release Planning" (RPR), use the following commands:
@@ -25,7 +20,11 @@ LPRR -i classic -b 30 -r 10 20 40 -o results/landscape/profit-risk/%s.txt -s 253
 LRPR -i nrp1 -b 15 -r 6 -o results/landscape/release/%s.txt -s 253958446296927
 
 
-<h2>OPTIMIZERS</h2>
+## OPTIMIZERS
+
+To run the optimizers for the "Profit-Only" (OP), "Cost-Risk Only" (OCO), "Cost-Risk as an Objective" (OCR), 
+"Cost-Risk as a Constraint" (OCC), "Profit-Risk Only" (OPO), "Profit-Risk as an Objective" (PRR), and 
+"Release Planning" (ORL), use the following commands:
 
 OP -i classic -b 30 50 70 -o output_op_classic.txt -s 253958446296927
 
