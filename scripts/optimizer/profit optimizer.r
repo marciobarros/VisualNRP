@@ -9,14 +9,16 @@ options(scipen=4, digits=2)
 # Loading data sets
 #
 # basedir <- "/Users/marcio"
-basedir <- "/Users/marcio.barros"
-# basedir <- "~"
+# basedir <- "/Users/marcio.barros"
+basedir <- "~"
 
 datafile <- paste(basedir, "/Desktop/Codigos/VisualNRP/results/optimizer/output_op_all.txt", sep="")
 data <- read.table(datafile, sep=",", header=TRUE)
 
 drops <- c("risk", "solution")
 data <- data[ , !(names(data) %in% drops)]
+
+data <- subset(data, !grepl("nrp-",data$instance) | budget != 70);
 
 library("data.table")
 dt <- data.table(data)
@@ -44,12 +46,10 @@ vargha.delaney <- function(r1, r2) {
 	return ((sum(rank(c(r1, r2))[seq_along(r1)]) / m - (m + 1) / 2) / n);
 }
 
-
 #
 # Inference tests and effect-size
 #
-instances <- unique(data$instance)
-budgets <- unique(data$budget)
+instances <- unique(paste(data$instance, data$budget, sep="-"))
 
 names <- c()
 pvalues <- c()
@@ -57,20 +57,16 @@ effectsizes <- c()
 
 for (instance_ in instances)
 {
-	for (budget_ in budgets)
-	{
-		ils <- subset(data, instance == instance_ & budget == budget_ & alg == "ILS")$fit
-		visils <- subset(data, instance == instance_ & budget == budget_ & alg == "VISILS")$fit
-		
-		name <- paste(instance_, "-", budget_, sep="")
-		names <- c(names, name)
-		
-		pvalue <- wilcox.test(visils, ils)$p.value
-		pvalues <- c(pvalues, pvalue)
-		
-		effectsize <- vargha.delaney(visils, ils)
-		effectsizes <- c(effectsizes, effectsize)
-	}
+	ils <- subset(data, paste(data$instance, data$budget, sep="-") == instance_ & alg == "ILS")$fit
+	visils <- subset(data, paste(data$instance, data$budget, sep="-") == instance_ & alg == "VISILS")$fit
+	
+	names <- c(names, instance_)
+	
+	pvalue <- wilcox.test(visils, ils)$p.value
+	pvalues <- c(pvalues, pvalue)
+	
+	effectsize <- vargha.delaney(visils, ils)
+	effectsizes <- c(effectsizes, effectsize)
 }
 
 result <- data.frame(instance=names, pvalue=pvalues, es=effectsizes)
