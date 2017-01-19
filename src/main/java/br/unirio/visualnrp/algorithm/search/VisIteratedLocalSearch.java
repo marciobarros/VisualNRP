@@ -15,12 +15,18 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 	private int minCustomers;
 	private final int numberSamplingIter;
 
+	/**
+	 * Initializes the search algorithm
+	 */
 	public VisIteratedLocalSearch(PrintWriter detailsFile, Project project, int maxEvaluations, int numberSamplingIter, Constructor constructor) throws Exception
 	{
 		super(detailsFile, project, maxEvaluations, constructor);
 		this.numberSamplingIter = numberSamplingIter;
 	}
 
+	/**
+	 * Performs the search
+	 */
 	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
 		RandomSamplingResult rsr = executeRandomSampling(numberSamplingIter, getProject(), calculator);
@@ -107,6 +113,9 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		return perturbedSolution;
 	}
 
+	/**
+	 * Performs the random sampling phase
+	 */
 	private RandomSamplingResult executeRandomSampling(int numberSamplingIter, Project project, IFitnessCalculator calculator)
 	{
 		int numberOfCustomersBest = 0;
@@ -141,7 +150,9 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 		return new RandomSamplingResult(bestSolution, bestFitness, numberOfCustomersBest);
 	}
 
-	// TODO generalizar esta rotina (calcular attendedCustomers sempre e chamar canFlipCustomer?)
+	/**
+	 * Visits all neighbors of a given solution
+	 */
 	@Override
 	protected NeighborhoodVisitorResult visitNeighbors(Solution solution, IFitnessCalculator calculator, double bestFitness)
 	{
