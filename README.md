@@ -6,6 +6,13 @@ These implementations use a graphical pattern observed in problem instances to n
 **Fixed random seed rationale**: miliseconds system time on 2016-04-26.
 
 
+## TUNNING
+
+To run the tunning configurations, use the following commands:
+
+* TIS -i classic -b 30 50 70 -o output_tis_classic.txt -s 253958446296927
+
+
 ## LANDSCAPES
 
 To run the landscape reports for the "Cost-Risk as an Objective" (CRR), "Cost-Risk as a Constraint" (CCR), 
