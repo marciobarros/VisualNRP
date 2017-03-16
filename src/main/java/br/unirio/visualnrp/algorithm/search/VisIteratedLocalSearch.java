@@ -29,7 +29,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 	 */
 	public boolean[] execute(IFitnessCalculator calculator) throws Exception
 	{
-		RandomSamplingResult rsr = executeRandomSampling(numberSamplingIter, getProject(), calculator);
+		RandomSamplingResult rsr = executeRandomSampling(getProject(), calculator);
 		this.minCustomers = rsr.minCustomers;
 
 		Solution bestSolution = new Solution(getProject(), rsr.solution);
@@ -116,7 +116,7 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 	/**
 	 * Performs the random sampling phase
 	 */
-	private RandomSamplingResult executeRandomSampling(int numberSamplingIter, Project project, IFitnessCalculator calculator)
+	public RandomSamplingResult executeRandomSampling(Project project, IFitnessCalculator calculator)
 	{
 		int numberOfCustomersBest = 0;
 		int customerCount = project.getCustomerCount();
@@ -192,18 +192,28 @@ public class VisIteratedLocalSearch extends SearchAlgorithm
 
 		return new NeighborhoodVisitorResult(NeighborhoodVisitorStatus.NO_BETTER_NEIGHBOR);
 	}
-}
-
-class RandomSamplingResult
-{
-	public boolean[] solution;
-	public double fitness;
-	public int minCustomers;
-
-	public RandomSamplingResult(boolean[] solution, double fitness, int minCustomers)
+	
+	/**
+	 * Classe that represents the results of random sampling
+	 * 
+	 * @author marciobarros
+	 */
+	public class RandomSamplingResult
 	{
-		this.solution = solution;
-		this.fitness = fitness;
-		this.minCustomers = minCustomers;
+		private boolean[] solution;
+		private double fitness;
+		private int minCustomers;
+	
+		public RandomSamplingResult(boolean[] solution, double fitness, int minCustomers)
+		{
+			this.solution = solution;
+			this.fitness = fitness;
+			this.minCustomers = minCustomers;
+		}
+		
+		public int getCustomerCount()
+		{
+			return minCustomers;
+		}
 	}
 }

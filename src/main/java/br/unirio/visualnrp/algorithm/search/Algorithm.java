@@ -19,12 +19,12 @@ public enum Algorithm
 	/**
 	 * Maximum number of evaluation rounds for the algorithms
 	 */
-	private static int MAXEVALUATIONS = 10000000;
+	public static int MAXEVALUATIONS = 10000000;
 	
 	/**
 	 * Sample size for the VISILS algorithm
 	 */
-	private static int SAMPLE_SIZE = 10;
+	public static int SAMPLE_SIZE = 10;
 	
 	/**
 	 * Creates a search algorithm for the problem at hand

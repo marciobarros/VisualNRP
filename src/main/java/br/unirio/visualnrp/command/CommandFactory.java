@@ -15,6 +15,7 @@ import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfitRisk;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizeProfitRiskOnly;
 import br.unirio.visualnrp.command.optimizer.CommandOptimizerReleasePlanning;
 import br.unirio.visualnrp.command.tunning.CommandInitialSeedTunning;
+import br.unirio.visualnrp.command.tunning.CommandRandomSamplingCut;
 
 /**
  * Class that represents a command factory
@@ -54,6 +55,7 @@ public class CommandFactory
 		this.commands.add(new CommandOptimizerReleasePlanning());
 		
 		this.commands.add(new CommandInitialSeedTunning());
+		this.commands.add(new CommandRandomSamplingCut());
 	}
 	
 	/**

@@ -245,62 +245,62 @@ public abstract class SearchAlgorithm
 	 * Executes the algorithm
 	 */
 	public abstract boolean[] execute(IFitnessCalculator calculator) throws Exception;
-}
-
-/**
- * Set of potential results from visiting neighbors
- */
-enum NeighborhoodVisitorStatus
-{
-	FOUND_BETTER_NEIGHBOR, NO_BETTER_NEIGHBOR, SEARCH_EXHAUSTED
-}
-
-/**
- * Class that represents the results of the local search phase
- */
-class NeighborhoodVisitorResult
-{
-	/**
-	 * Status in the end of the local search
-	 */
-	private NeighborhoodVisitorStatus status;
 
 	/**
-	 * Fitness of the best neighbor, in case one has been found
+	 * Set of potential results from visiting neighbors
 	 */
-	private double neighborFitness;
-
-	/**
-	 * Initializes a successful local search status
-	 */
-	public NeighborhoodVisitorResult(NeighborhoodVisitorStatus status, double fitness)
+	public enum NeighborhoodVisitorStatus
 	{
-		this.status = status;
-		this.neighborFitness = fitness;
+		FOUND_BETTER_NEIGHBOR, NO_BETTER_NEIGHBOR, SEARCH_EXHAUSTED
 	}
-
+	
 	/**
-	 * Initializes an unsuccessful local search
+	 * Class that represents the results of the local search phase
 	 */
-	public NeighborhoodVisitorResult(NeighborhoodVisitorStatus status)
+	public class NeighborhoodVisitorResult
 	{
-		this.status = status;
-		this.neighborFitness = 0.0;
-	}
-
-	/**
-	 * Returns the status of the local search
-	 */
-	public NeighborhoodVisitorStatus getStatus()
-	{
-		return status;
-	}
-
-	/**
-	 * Return the fitness of the best neighbor found, if any
-	 */
-	public double getNeighborFitness()
-	{
-		return neighborFitness;
+		/**
+		 * Status in the end of the local search
+		 */
+		private NeighborhoodVisitorStatus status;
+	
+		/**
+		 * Fitness of the best neighbor, in case one has been found
+		 */
+		private double neighborFitness;
+	
+		/**
+		 * Initializes a successful local search status
+		 */
+		public NeighborhoodVisitorResult(NeighborhoodVisitorStatus status, double fitness)
+		{
+			this.status = status;
+			this.neighborFitness = fitness;
+		}
+	
+		/**
+		 * Initializes an unsuccessful local search
+		 */
+		public NeighborhoodVisitorResult(NeighborhoodVisitorStatus status)
+		{
+			this.status = status;
+			this.neighborFitness = 0.0;
+		}
+	
+		/**
+		 * Returns the status of the local search
+		 */
+		public NeighborhoodVisitorStatus getStatus()
+		{
+			return status;
+		}
+	
+		/**
+		 * Return the fitness of the best neighbor found, if any
+		 */
+		public double getNeighborFitness()
+		{
+			return neighborFitness;
+		}
 	}
 }
